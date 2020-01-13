@@ -1,0 +1,18 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+$config['foundation_list'] = array(
+    '0x3e95484f2b236a14d355c6fa7447d5bdeb0ac81b',
+    '0x315efe01b4a86ee3e370f5cd94550d4b52f129f2',
+    '0x1cae2ad952818400eddebc1af66165cb5ea8b9b0',
+    '0x65b993f302e0a1f3e843f78d74f6b0fed5596fc1',
+    '0x5eb9590a8cf43d54f87f57882ef4aaa3992e6f05',
+    '0xb75f77d749140d2455d07e136e13f6aa211b0fbb',
+    '0x6c83a9e422133c0dc237820801f40a0a40ec3d6c',
+    '0x1023e70c0b983ed4d9b93a93282a4b153d4c0308',
+    '0x79e2a76f7733bbd0a15cdb972f64a7c1abc1eed8',
+    '0xb312e738ec03501525b6373118f9f4d43eb81b8b',
+    '0x848b9f776bb39e044946be1e8481dca4c6b07944',
+    '0x598c9bd477c5ac85c9720da409d83c25e394ee19',
+    '0x378bc9f9676301a6897705f03404292d2d8c3e69'
+);

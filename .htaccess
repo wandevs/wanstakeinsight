@@ -1,0 +1,79 @@
+RewriteEngine On
+
+AddDefaultCharset UTF-8
+
+php_value date.timezone "Asia/Bangkok"
+# Protect the htaccess file
+ <Files .htaccess>
+ 	Order Allow,Deny
+ 	Deny from all
+ </Files>
+
+
+# Disable directory browsing
+Options All -Indexes
+
+ # BEGIN COMPRESSION AND CACHING
+ <IfModule mod_deflate.c>
+ 	# Enable compression
+ 	AddOutputFilterByType DEFLATE text/css text/javascript application/javascript application/x-javascript text/html text/plain text/xml image/x-icon
+ 	<IfModule mod_setenvif.c>
+ 		BrowserMatch ^Mozilla/4 gzip-only-text/html
+ 		BrowserMatch ^Mozilla/4\.0[678] no-gzip
+ 		BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+ 		BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+ 	</IfModule>
+ 	<IfModule mod_headers.c>
+ 		# Make sure proxies deliver correct content
+ 		Header append Vary User-Agent env=!dont-vary
+ 		# Ensure proxies deliver compressed content correctly
+ 		Header append Vary Accept-Encoding
+ 	</IfModule>
+ </IfModule>
+ 
+
+ <IfModule mod_headers.c>
+ 	# No ETags, No Pragma
+ 	Header unset Pragma
+ 	Header unset ETag
+ 	# Default cache time to 1 year (31536000 sec)
+ 	Header set Cache-Control "max-age=31536000, public, must-revalidate"
+ </IfModule>
+
+# No ETags
+FileETag none
+
+ # CACHE SETTINGS (mod_expires)
+ <IfModule mod_expires.c>
+ 	ExpiresActive On
+ 	ExpiresDefault "access plus 1 year"
+ 	ExpiresByType text/html "modification plus 1 hour"
+ 	ExpiresByType text/css "modification plus 6 weeks"
+ 	ExpiresByType text/javascript "modification plus 6 weeks"
+	ExpiresByType application/javascript "modification plus 6 weeks"
+ 	ExpiresByType application/x-javascript "modification plus 6 weeks"
+	ExpiresByType image/jpeg "modification plus 6 weeks"
+	ExpiresByType image/webp "modification plus 6 weeks"
+	ExpiresByType image/png "modification plus 6 weeks"
+	ExpiresByType image/gif "modification plus 6 weeks"
+ </IfModule>
+ 
+ # No cache for php-files
+ <FilesMatch "\.(php)$">
+ 	<IfModule mod_expires.c>
+ 		ExpiresActive Off
+ 	</IfModule>
+ 	<IfModule mod_headers.c>
+ 		Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+ 	</IfModule>
+ </FilesMatch>
+
+   
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+
+
+
+
+
