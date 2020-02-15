@@ -56,6 +56,10 @@
                                 <tbody style="overflow-y:scroll;height:100px;">
                                 <?php
                                 $stategy3_tmp = array();
+								// Sort by epoch //
+								uasort($stategy1, function($a, $b) {
+									return $b['epoch'] - $a['epoch'];
+								});
                                 foreach($stategy1 as $address=>$row):
 
 
