@@ -12,7 +12,9 @@ with your developement path such as "http://wanstakeinsight.local/"
 2. Edit file in application/iwan.php
 $is_mainnet=true; 
 be "false" if you want to use TESTNET
+
 $config['iwan_client'] = 'wss://api.wanchain.org:8443/ws/v3/foobar'; // Replace "foobar" with client key
+
 $config['iwan_secret'] = 'foobar'; // Replace "foobar" with client secret
 
 3. Don't forget to chmod 777 on application/cache
