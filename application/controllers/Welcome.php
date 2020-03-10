@@ -1862,7 +1862,7 @@ class Welcome extends CI_Controller {
         }
         echo '-------------------------------------------<br/>';
         echo '🔗 Full info at www.wanstakeinsight.com<br/>';
-        echo '❤ Support us by staking on validator "CryptoFennec" :3';
+        //echo '❤ Support us by staking on validator "CryptoFennec" :3';
     }
 
 

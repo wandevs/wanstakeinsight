@@ -85,7 +85,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent">
 
 
-                    <a style="color:#2c2c2c;margin-left:20px;margin-top:10px;" class="navbar-brand" href="./"><img src="./assets/logo.png" style="margin-top:-5px;"/> WAN STAKE INSIGHT <sup class="badge badge-danger" style="font-size:11px;font-weight:normal;vertical-align: top">Experimental</sup></a>
+                    <a style="color:#2c2c2c;margin-left:20px;margin-top:10px;" class="navbar-brand" href="./"><img src="./assets/logo.png" style="margin-top:-5px;"/> WAN STAKE INSIGHT</a>
 
             <div class="navbar-toggle">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -165,9 +165,4 @@
         </nav>
 -->
 
-        <div class="alert alert-info" style="margin-bottom:0">
-            Dear Validators, This website need to update information such as validator's name, logo, contact etc by manual. Please use <a class="text-dark" target="_blank" href="https://forms.gle/sZBtsaAhpuACeiGEA">this request form</a> to update your validator information
-        </div>
-        <div class="alert alert-danger">
-            You can support us by staking on our Validator <b><img src="https://www.cryptofennec.com/images/cryptofennec.png" style="height:24px;width:auto;background:white;display:inline-block;padding:2px"/> CryptoFennec</b>
-        </div>
+     
