@@ -211,7 +211,7 @@ $config['validator_list'] = array(
     '0x83a1b91ade06bcd2137d953dbdfabe60f78fd157'=>array(
         'logo'=>'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAwCAYAAACG5f33AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAASdAAAEnQB3mYfeAAAANVJREFUaEPt1sENwkAMRFHTfwGcaYgCEGmAArgupgV7pcTSQ5pjotXPzGdvEbEyfg0Cf4BSZwBes0AAAlif3w51aaAGauDoFYw+/A6Hdd8BIAdy4OgVjD581187ngeQAzlw8Aoe+fWkziA+CVDqDOJIgFJnAGCzQAACWJ/fDnVpoAZq4OhbgAmbsAmb8I7rwNR3cCAHnuzAd34BqTOI7z2W1BnEesWSOoNYz3xYygwAbJYHQADPVZAGaqAGlv8Br3B7MGETNmETvoKLzjoDB3IgB4524A8I5tamQPXMVAAAAABJRU5ErkJggg==',
         'name'=>'GerWAN',
-        'telegram'=>'wulst,Ranzdreck,AllYouCanStake',
+        'telegram'=>'AllYouCanStake',
         'language'=>'English | Deutsch',
 		'website'=>'https://www.allyoucanstake.de/'
     ),
