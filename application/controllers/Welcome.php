@@ -59,9 +59,14 @@ class Welcome extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-
-
-            $client->send($query_string);
+			try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
             $result = json_decode($client->receive(),true);
 
 
@@ -148,7 +153,14 @@ class Welcome extends CI_Controller {
             );
 
             $query_string = json_encode($query_array);
-            $client->send($query_string);
+            try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
             $result = json_decode($client->receive(),true);
 
             // Save into the cache for 1 days
@@ -196,7 +208,14 @@ class Welcome extends CI_Controller {
             );
 
             $query_string = json_encode($query_array);
-            $client->send($query_string);
+			try
+			{
+				$client->send($query_string);
+			}
+			catch (exception $e)
+			{
+				echo $this->_api_error();
+			}
             $result = json_decode($client->receive(),true);
 
             // Save into the cache for 5 minutes
@@ -262,7 +281,14 @@ class Welcome extends CI_Controller {
             //print_r($query_string);
             //die();
 
-            $client->send($query_string);
+            try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
             $result = json_decode($client->receive(),true);
 
             // Save into the cache for 1 days
@@ -314,14 +340,22 @@ class Welcome extends CI_Controller {
             );
 
             $query_string = json_encode($query_array);
-            $client->send($query_string);
+			
+            try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
             $result = json_decode($client->receive(),true);
 
-            // Save into the cache for 5 minutes
+            // Save into the cache for 1 hour
             if (isset($result['result']) && $result['result'])
             {
                 $result = serialize($result['result']);
-                $this->cache->save($method, $result, 1800);
+                $this->cache->save($method, $result, 3600);
             }
             else{
                 $result = '';
@@ -363,7 +397,14 @@ class Welcome extends CI_Controller {
             );
 
             $query_string = json_encode($query_array);
-            $client->send($query_string);
+            try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
             $result = json_decode($client->receive(),true);
 
             // Save into the cache for 5 minutes
@@ -413,7 +454,14 @@ class Welcome extends CI_Controller {
 
                 $query_string = json_encode($query_array);
 
-                $client->send($query_string);
+                try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
                 $result = json_decode($client->receive(), true);
 
                 if (isset($result['result']) && $result['result']) {
@@ -606,7 +654,14 @@ class Welcome extends CI_Controller {
                         );
 
                         $query_string = json_encode($query_array);
-                        $client->send($query_string);
+                        try
+						{
+							$client->send($query_string);
+						}
+						catch (exception $e)
+						{
+							echo $this->_api_error();
+						}
                         $result = json_decode($client->receive(), true);
 
                         // Save into the cache for 1 days
@@ -1437,7 +1492,14 @@ class Welcome extends CI_Controller {
                 );
 
                 $query_string = json_encode($query_array);
-                $client->send($query_string);
+                try
+				{
+					$client->send($query_string);
+				}
+				catch (exception $e)
+				{
+					echo $this->_api_error();
+				}
                 $result = json_decode($client->receive(), true);
 
                 // Save into the cache for 1 days
@@ -1864,6 +1926,13 @@ class Welcome extends CI_Controller {
         echo '🔗 Full info at www.wanstakeinsight.com<br/>';
         //echo '❤ Support us by staking on validator "CryptoFennec" :3';
     }
+	
+	private function _api_error()
+	{
+		echo '<center style="font-size:25px;font-family:arial"><br/><br/><img src="./assets/logo.png"> <br/><br/>WAN STAKE INSIGHT</center><br/>';
+		echo '<center style="font-size:20px;font-family:arial"><b>API Error!</b> <br/>Please try again</center>';
+		die();
+	}
 
 
 
