@@ -65,7 +65,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
             $result = json_decode($client->receive(),true);
 
@@ -159,7 +160,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
             $result = json_decode($client->receive(),true);
 
@@ -214,7 +216,8 @@ class Welcome extends CI_Controller {
 			}
 			catch (exception $e)
 			{
-				echo $this->_api_error();
+				$client->send($query_string);
+					//echo $this->_api_error();
 			}
             $result = json_decode($client->receive(),true);
 
@@ -287,7 +290,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
             $result = json_decode($client->receive(),true);
 
@@ -347,7 +351,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
             $result = json_decode($client->receive(),true);
 
@@ -403,7 +408,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
             $result = json_decode($client->receive(),true);
 
@@ -460,7 +466,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
                 $result = json_decode($client->receive(), true);
 
@@ -660,7 +667,8 @@ class Welcome extends CI_Controller {
 						}
 						catch (exception $e)
 						{
-							echo $this->_api_error();
+							$client->send($query_string);
+					//echo $this->_api_error();
 						}
                         $result = json_decode($client->receive(), true);
 
@@ -1498,7 +1506,8 @@ class Welcome extends CI_Controller {
 				}
 				catch (exception $e)
 				{
-					echo $this->_api_error();
+					$client->send($query_string);
+					//echo $this->_api_error();
 				}
                 $result = json_decode($client->receive(), true);
 
@@ -1972,4 +1981,178 @@ class Welcome extends CI_Controller {
 
         }
     }
+	
+	public function sticker()
+	{
+	    error_reporting(0);
+        //$this->output->cache(60);
+        // Validator Address //
+        // Delegated amount //
+        // Highest Delegated  //
+        // Average Delegated
+        // Sum of Partner In //
+        // Fee Rate //
+        // Max Fee Rate //
+
+        // Pending Stake Out//
+        $validator_list = array();
+        $non_delegate_validator_list = array();
+
+        $view['max_fee_rate_list'] = array();
+        $view['fee_rate_list'] = array();
+        $view['delegate_amount_list'] = array();
+        $view['total_staked'] = 0;
+        $view['pending_stake_out_list'] = array();
+        $view['non_delegate_validator_amount_list'] = array();
+        $view['delegate_validator_amount_list'] = array();
+        $view['total_voting_power'] =0;
+
+
+        $result = unserialize($this->_getCurrentStakerInfo());
+
+        foreach($result as $row)
+        {
+            //echo '<pre>';
+            //print_r($row);
+            //echo '</pre>';
+            //die();
+
+            $selfstake = round(hexdec($row['amount'])/WAN_DIGIT,18);
+            foreach($row['partners'] as $p_row)
+            {
+                $selfstake+=round(hexdec($p_row['amount'])/WAN_DIGIT,18);
+            }
+
+            //echo $selfstake.'<br/>';
+            $selfstake = ''.$selfstake;
+            if ($selfstake < 50000 || $row['feeRate']==10000)
+            {
+
+               // echo '>'.$selfstake.'<br/>';
+                $view['non_delegate_validator_amount_list'][$row['address']] = $selfstake;
+                $view['total_staked'] += $selfstake;
+
+
+                // Calculate non d validator
+                $non_delegate_validator_list[$row['address']]['address'] = $row['address'];
+                $selfstake = round(hexdec($row['amount'])/WAN_DIGIT,18);
+                $non_delegate_validator_list[$row['address']]['selfStake'] = $selfstake;
+                $non_delegate_validator_list[$row['address']]['partnerAmount'] = array();
+                $non_delegate_validator_list[$row['address']]['sumVotingPower'] = round(hexdec($row['votingPower'])/WAN_DIGIT,18);
+
+                $non_delegate_validator_list[$row['address']]['stakingEpoch'] = $row['stakingEpoch'];
+                $non_delegate_validator_list[$row['address']]['lockEpochs'] = $row['lockEpochs'];
+                $non_delegate_validator_list[$row['address']]['nextLockEpochs'] = $row['nextLockEpochs'];
+
+
+                // Sum Voting Power //
+                foreach($row['partners'] as $p_row)
+                {
+
+                    $non_delegate_validator_list[$row['address']]['partnerAmount'][] = round(hexdec($p_row['amount'])/WAN_DIGIT,18);
+                    $selfstake+=round(hexdec($p_row['amount'])/WAN_DIGIT,18);
+                    $non_delegate_validator_list[$row['address']]['sumVotingPower'] += round(hexdec($p_row['votingPower'])/WAN_DIGIT,18);
+
+                    $view['total_voting_power'] += hexdec($p_row['votingPower'])/WAN_DIGIT;
+                }
+                foreach($row['clients'] as $c_row)
+                {
+                    $view['total_voting_power'] += hexdec($c_row['votingPower'])/WAN_DIGIT;
+                }
+                $view['total_voting_power'] += hexdec($row['votingPower'])/WAN_DIGIT;
+
+
+                continue;
+            }
+
+            $validator_list[$row['address']]['address'] = $row['address'];
+            $view['fee_rate_list'][] = $validator_list[$row['address']]['feeRate'] = $row['feeRate'];
+            $view['max_fee_rate_list'][] = $validator_list[$row['address']]['maxFeeRate'] = $row['maxFeeRate'];
+
+            // Reset selfstake //
+            $selfstake = round(hexdec($row['amount'])/WAN_DIGIT,18);
+            $validator_list[$row['address']]['selfStake'] = $selfstake;
+
+            $validator_list[$row['address']]['partnerAmount'] = array();
+
+            $validator_list[$row['address']]['sumVotingPower'] = round(hexdec($row['votingPower'])/WAN_DIGIT,18);
+           // die();
+
+            // Epoch //
+            $validator_list[$row['address']]['stakingEpoch'] = $row['stakingEpoch'];
+            $validator_list[$row['address']]['lockEpochs'] = $row['lockEpochs'];
+            $validator_list[$row['address']]['nextLockEpochs'] = $row['nextLockEpochs'];
+
+            foreach($row['partners'] as $p_row)
+            {
+                $validator_list[$row['address']]['partnerAmount'][] = round(hexdec($p_row['amount'])/WAN_DIGIT,18);
+                $selfstake+=round(hexdec($p_row['amount'])/WAN_DIGIT,18);
+                $validator_list[$row['address']]['sumVotingPower'] += round(hexdec($p_row['votingPower'])/WAN_DIGIT,18);
+                $view['total_voting_power'] += hexdec($p_row['votingPower'])/WAN_DIGIT;
+            }
+
+            $view['delegate_validator_amount_list'][] = $selfstake;
+            $view['total_staked'] += $selfstake;
+
+            foreach($row['clients'] as $c_row)
+            {
+                if ($c_row['quitEpoch'] != 0)
+                {
+                    $view['pending_stake_out_list'][] = round(hexdec($c_row['amount'])/WAN_DIGIT,18);
+                    $validator_list[$row['address']]['stake_out'][] = round(hexdec($c_row['amount'])/WAN_DIGIT,18);
+                }
+                $view['total_staked'] += $view['delegate_amount_list'][] = $validator_list[$row['address']]['delegatorAmount'][] = round(hexdec($c_row['amount'])/WAN_DIGIT,18);
+                $validator_list[$row['address']]['sumVotingPower'] += round(hexdec($c_row['votingPower'])/WAN_DIGIT,18);
+                $view['total_voting_power'] += hexdec($c_row['votingPower'])/WAN_DIGIT;
+            }
+
+            $view['total_voting_power'] += hexdec($row['votingPower'])/WAN_DIGIT;
+
+            if (isset($validator_list[$row['address']]['delegatorAmount']))
+            {
+                $validator_list[$row['address']]['sumDelegatorAmount'] = array_sum($validator_list[$row['address']]['delegatorAmount']);
+            }
+            else{
+                $validator_list[$row['address']]['sumDelegatorAmount'] = 0;
+            }
+        }
+        //die();
+
+        // Sort by stake //
+        usort($validator_list, function($a, $b) {
+            return $b['sumDelegatorAmount'] - $a['sumDelegatorAmount'];
+        });
+
+        // Sort by stake //
+        usort($non_delegate_validator_list, function($a, $b) {
+            return $b['sumVotingPower'] - $a['sumVotingPower'];
+        });
+
+        $view['validator_count'] = count($validator_list);
+		$view['pending_stake_out_count'] = count($view['pending_stake_out_list']);
+		$view['pending_stake_out_sum'] = array_sum($view['pending_stake_out_list']);
+
+        $view['non_delegate_validator_count'] = count($view['non_delegate_validator_amount_list']);
+		$view['delegate_validator_count'] = count($view['delegate_validator_amount_list']);
+        //$view['validator_info_list'] = $this->config->item('validator_list');
+       
+	   $view['delegated_amount'] = array_sum($view['delegate_amount_list']);
+	   $view['delegated_count'] = count($view['delegate_amount_list']);
+	   
+	   unset($view['total_voting_power']);
+	   unset($view['validator_count']);
+	   unset($view['delegate_amount_list']);
+	   unset($view['fee_rate_list']);
+	   unset($view['max_fee_rate_list']);
+	   unset($view['pending_stake_out_list']);
+	   unset($view['non_delegate_validator_amount_list']);
+	   unset($view['delegate_validator_amount_list']);
+
+        $epochinfo = $this->_getCurrentEpochInfo();
+
+        $epochinfo = unserialize($epochinfo);
+        $view['current_epoch_id'] = $epochinfo['epochId'];
+
+		echo json_encode($view);
+	}
 }
