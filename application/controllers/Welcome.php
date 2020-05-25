@@ -1809,7 +1809,7 @@ class Welcome extends CI_Controller {
             }
             $total_validator_incentive += round(hexdec($reward['incentive'])/WAN_DIGIT,18);
         }
-        echo '🏆 Reward payout for previous epoch '.($selected_result['epochId']-1).' to<br/>';
+        echo '🏆 Reward payout for previous epoch '.($selected_result['epochId']-1).' 🏆<br/>';
         //echo '-------------------------------------------<br/>';
         //echo 'Delegators #: '.number_format($total_delegators).' delegators<br/>';
         echo 'Delegators: '.number_format($total_incentive,2).' WAN ('.number_format($total_delegators).' delegators)<br/>';
