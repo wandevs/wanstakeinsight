@@ -106,7 +106,7 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">SELECTED VALIDATORS</h4>
-                    <p class="card-category">Total non-foundation <b><?php echo (count($selected_validators)-1)?></b> Validators</p>
+                    <p class="card-category">Total <b><?php echo (count($selected_validators)-1)?></b> Validators</p>
                     <hr/>
                 </div>
 
@@ -250,7 +250,12 @@
                         <?php endforeach?>
                     <?php endif;?>
 
-
+					<?php
+					if ($address=='foundation')
+					{
+						continue;
+					}
+					?>
                         <tr>
                             <td style="text-align: center;width:80px;">
                                 <?php
