@@ -207,9 +207,7 @@
                                     NAME / ADDRESS
                                 </th>
 								
-								<th class="text-center">
-									Renewal?
-								</th>
+								
 								
 								<th class="text-center">
                                     Non-Slashed?
@@ -298,11 +296,10 @@
 										
 										?>
 										
+										<?php echo $storeman['quited']==''?'<span class="badge badge-success" style="font-size:13px">Renew</span>':'<span class="badge badge-danger" style="font-size:13px">Quitted</span>'?> 
 										
                                     </td>
-									<th class="text-center">
-										<?php echo $storeman['quited']==''?'<span class="badge badge-success" style="font-size:14px">Renew</span>':'<span class="badge badge-danger" style="font-size:14px">Quitted</span>'?>
-									</th>
+									
 									
 									<td class="text-center">
 										<?php
