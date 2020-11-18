@@ -208,8 +208,13 @@
                                 </th>
 								
 								<th class="text-center">
+									Renewal?
+								</th>
+								
+								<th class="text-center">
                                     Non-Slashed?
                                 </th>
+								
 
                                 <th class="text-center">
                                     CAPACITY
@@ -288,13 +293,16 @@
 										<?php
 										if ($storeman['isWhite']==1)
 										{
-											echo '<span class="badge badge-warning">Whitelist</span>';
+											echo '<span style="font-size:13px;" class="badge badge-info">Foundation</span>';
 										}
-										else{
-											echo '<span class="badge badge-success">Community</span>';
-										}
+										
 										?>
+										
+										
                                     </td>
+									<th class="text-center">
+										<?php echo $storeman['quited']==''?'<span class="badge badge-success" style="font-size:14px">Renew</span>':'<span class="badge badge-danger" style="font-size:14px">Quitted</span>'?>
+									</th>
 									
 									<td class="text-center">
 										<?php
