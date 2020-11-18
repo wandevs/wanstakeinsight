@@ -94,6 +94,13 @@
                     <span class="navbar-toggler-bar navbar-kebab"></span>
                 </button>
             </div>
+			<style>
+			.navbar .navbar-collapse .nav-item a
+			{
+				    font-size: 14px !important;
+					padding-top: 16px;
+			}
+			</style>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item <?php echo $this->uri->segment(1)==''?'active':''?>">
@@ -111,58 +118,15 @@
                             <li class="nav-item <?php echo $this->uri->segment(1)=='stake-guide'?'active':''?>">
                                 <a class="nav-link" href="./stake-guide">STAKING GUIDE</a>
                             </li>
+							<li class="nav-item <?php echo $this->uri->segment(1)=='storeman'?'active':''?>">
+                                <a class="nav-link" href="./storeman">STOREMEN</a>
+                            </li>
 
                         </ul>
                     </div>
 
         </nav>
-<!--
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar bar1"></span>
-                        <span class="icon-bar bar2"></span>
-                        <span class="icon-bar bar3"></span>
-                    </button>
-                    <a style="color:#2c2c2c" class="navbar-brand" href="./"><img src="./assets/logo.png" style="margin-top:-5px;"/> WAN STAKE INSIGHT <sup class="badge badge-danger" style="font-size:11px;font-weight:normal;vertical-align: top">Experimental</sup></a>
+		
+		<div class="alert alert-info text-center"><i class="fa fa-heart"></i> Support us by staking with <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/vld/0x2a2fee5d3aefdcddd8247e3ea094a591323f3879" target="_blank">Our POS Validators</a></b> or <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/storemaninfo/0x92dce4f5857cad9208a2f168445e3670d4f84d74?groupid=0x000000000000000000000000000000000000000000000041726965735f303031" target="_blank">Our Storeman Node</a></b><i class="fa fa-heart"></i></div>
 
-                </div>
-                <div class="navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="ti-panel"></i>
-                                <p>Stats</p>
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="ti-bell"></i>
-                                <p class="notification">5</p>
-                                <p>Notifications</p>
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Notification 1</a></li>
-                                <li><a href="#">Notification 2</a></li>
-                                <li><a href="#">Notification 3</a></li>
-                                <li><a href="#">Notification 4</a></li>
-                                <li><a href="#">Another notification</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="ti-settings"></i>
-                                <p>Settings</p>
-                            </a>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </nav>
--->
-
-     
+       

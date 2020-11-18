@@ -179,7 +179,7 @@
                                 $s2_count = 0;
                                 foreach($stategy2 as $address=>$row):
                                     $s2_count++;
-                                    if ($s2_count > 10) break;
+                                    if ($s2_count > 15) break;
                                     ?>
                                     <tr>
 
@@ -287,7 +287,7 @@
                                     $s2_count = 0;
                                     foreach($stategy2 as $address=>$row):
                                         $s2_count++;
-                                        if ($s2_count > 10) break;
+                                        if ($s2_count > 15) break;
 
                                         if (!isset($stategy3_tmp[$address]))
                                         {
