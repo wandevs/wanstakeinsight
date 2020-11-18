@@ -291,12 +291,12 @@
 										<?php
 										if ($storeman['isWhite']==1)
 										{
-											echo '<span style="font-size:13px;" class="badge badge-info">Foundation</span>';
+											echo '<span style="font-size:13px;font-weight:normal" class="badge badge-info">Foundation</span>';
 										}
 										
 										?>
 										
-										<?php echo $storeman['quited']==''?'<span class="badge badge-success" style="font-size:13px">Renew</span>':'<span class="badge badge-danger" style="font-size:13px">Quitted</span>'?> 
+										<?php echo $storeman['quited']==''?'<span class="badge badge-success" style="font-size:13px;font-weight:normal"><i class="fa fa-check"></i> Renew</span>':'<span class="badge badge-danger" style="font-size:13px;font-weight:normal"><i class="fa fa-remove"></i> Quitted</span>'?> 
 										
                                     </td>
 									
