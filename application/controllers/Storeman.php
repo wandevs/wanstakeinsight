@@ -151,9 +151,9 @@ class Storeman extends CI_Controller {
         if (!$result = $this->cache->get($method))
         {
             $params_array = array(
-				//'wkAddr' => '0x5C770cBf582D770b93cA90AdaD7E6BD33fAbC44C',
-				//'fromBlock' => 1604635200,
-				//'toBlock' => 1605240000,
+				'wkAddr' => '0x92Dce4f5857CAD9208A2f168445e3670D4f84d74',
+				'toBlock' => 11765038,
+				
                 'timestamp' => $this->config->item('iwan_timestamp')
             );
             $signature_message = array(
@@ -193,9 +193,9 @@ class Storeman extends CI_Controller {
 	{
 		//echo (1224387189358602196)/WAN_DIGIT;
 		echo '<pre>';
-		print_r($this->_getStoremanGroupInfo('0x000000000000000000000000000000000000000000746573746e65745f303038'));
+		//print_r($this->_getStoremanGroupInfo('0x000000000000000000000000000000000000000000000041726965735f303031'));
 		print_r($this->_getStoremanStakeTotalIncentive());
-		print_r($this->_getStoremanGroupMember('0x000000000000000000000000000000000000000000746573746e65745f303038'));
+		//print_r($this->_getStoremanGroupMember('0x000000000000000000000000000000000000000000000041726965735f303031'));
 		
 		
 		
@@ -204,7 +204,7 @@ class Storeman extends CI_Controller {
 	public function index()
 	{
 		//echo '<pre>';
-		$groupId = '0x000000000000000000000000000000000000000000746573746e65745f303039';
+		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
 		$groupName = 'Aries_001';
 		$storemen = $this->_getStoremanGroupMember($groupId);
 		$total_selfstaked = 0;

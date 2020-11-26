@@ -44,15 +44,17 @@
                         <div class="card-footer text-center">
                             <hr>
                             <div class="stats">
-                                <b><?php echo number_format($delegated_count)?></b> delegators ∷ Highest delegate is <b><?php echo number_format($highest_delegated)?></b> WAN
+                                <b><?php echo number_format($delegated_count)?></b> delegators
                             </div>
                         </div>
                     </div>
                 </div>
-                
+                </div>
+				
+				<div class="row">
 
                 
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="card card-stats">
                         <div class="card-body ">
                             <div class="row">
@@ -109,6 +111,34 @@
                         </div>
                     </div>
                 </div>
+				
+				
+				
+				<div class="col-lg-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12">
+                                    <div class="numbers text-center">
+                                        <p class="card-category">Remaining Operation time</p>
+                                        <p class="card-title" id="demo" style="font-size:35px;height:82px;padding:15px">...</p>
+										
+										
+										
+                                    </div>
+                                </div>
+                                
+                                
+                                
+
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+
+                        </div>
+                    </div>
+                </div>
+				
             </div>
             <div class="row">
                 <div class="col-md-12">
@@ -207,12 +237,18 @@
                                     NAME / ADDRESS
                                 </th>
 								
+								<th class="text-center">
+                                    Unclaimed Reward
+                                </th>
 								
 								
 								<th class="text-center">
                                     Non-Slashed?
                                 </th>
 								
+								<th class="text-center">
+                                    STAKED POWER
+                                </th>
 
                                 <th class="text-center">
                                     CAPACITY
@@ -254,7 +290,24 @@
 
                             <?php
 							$current_rank = 0;
+							$total_power = 0;
+							// Move foundation to last //
+							if ($storemen[0]['isWhite'] == 1)
+							{
+								$foundation = $storemen[0];
+								unset($storemen[0]);
+								array_push($storemen, $foundation); 
+							}
+							
+							// Power //
+							foreach($storemen as $storeman)
+							{
+								$self_power = round(($storeman['deposit']+$storeman['partnerDeposit'])/WAN_DIGIT*1.5);
+								$delegate_power = round($storeman['delegateDeposit']/WAN_DIGIT);
+								$total_power += $self_power+$delegate_power;
+							}
 							foreach($storemen as $storeman):
+							
                                 $current_rank++;
                                 ?>
                                 <tr>
@@ -270,7 +323,14 @@
                                         }
                                         else
                                         {
+											if ($storeman['isWhite']==1)
+											{
+												echo '<img src="data:image/png;base64,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" style="width:60px;height:60px;"/>';
+											}
+											else{
+												
                                             echo '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAVFBMVEUAAABxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGZxbGY5IJHbAAAAHHRSTlMAoZkIkytZfkOKeCIOBYc8NRKEakodFnFRYY9m2EI04QAAAdlJREFUWMPtl0mWhSAMRQnyRQXs+7//fdakBnqi0jwHNai7gHvSkBjFM3ObD1WppCyrIW9ngWHyms6U+Sdd12i6oh9dkq7VdIca43X2S0/UsYkbRR7yuOqRH52F+woKYZ+x+DiqC/N9KJQ9KOuMwtEhQk0R5GBDON7GWIqj9gnvBkRKusYzMjNx1LcxNrOmzUvi9LEBysIdXpSODNGxxBYrToxMuEW1ePCPkXoS9v6Hy2M0EW/Ghrz88WFJB83BxMpyy0ZnnLikohPVvVDRiSWsdf1DhFV/dDZh+60UT7ipLfJf7wQImbcz7erCUq4FSs0eK8ZKrHcQBd/aCHa4WDcAo2Q+6YBzrCbOlqybFrrCJGdLl1SpvoGumdJ0WY9cdRxXEuN2jpHzRHZpvvzOl1hAg12cnJsCLlnqfFynWwgGEuDG2gFVUCMbZsOy5Sg2vRbydfx+wmg9ByY8JR0qHKD157+Mire/6h/U594uYabkEZUJ2HhG/JPMq8XrxqWU+7LOggFO8zcTOPY4KmrCa7fTETm/vBtof3e94utGQxcwpyPOB8z43ZxX4qx/StgQZ0SEM9gUTs18EpvnxlNCPEQJ70L2I4YyKU9HkD/kZRKvYDatpOq/geH9AN3xFDqa+MLKAAAAAElFTkSuQmCC" style="width:50px;height:50px;"/><div style="width:50px;"></div>';
+											}
                                         }
                                         ?>
                                     </td>
@@ -300,6 +360,13 @@
 										
                                     </td>
 									
+									<td class="text-center">
+										<?php
+										echo number_format($storeman['incentive']/WAN_DIGIT,2).' WAN';
+										
+										?>
+									</td>
+									
 									
 									<td class="text-center">
 										<?php
@@ -312,6 +379,15 @@
 											echo $storeman['slashedCount'].' time'.($storeman['slashedCount']>1?'s':'');
 										}
 										
+										?>
+									</td>
+									
+									<td class="text-center">
+										<?php
+										$self_power = round(($storeman['deposit']+$storeman['partnerDeposit'])/WAN_DIGIT*1.5);
+										$delegate_power = round($storeman['delegateDeposit']/WAN_DIGIT);
+										echo '<b>'.number_format($self_power+$delegate_power).'</b><br/>';
+										echo number_format(($self_power+$delegate_power)*100/$total_power,2).'%'
 										?>
 									</td>
 
@@ -424,4 +500,6 @@
         </div>
 
 
-<?php $this->load->view('footer',array('js'=>'welcome_message_js'))?>
+<?php $this->load->view('footer',array('js'=>'storeman_js'))?>
+
+
