@@ -100,24 +100,49 @@
 				    font-size: 14px !important;
 					padding-top: 16px;
 			}
+			.show a, .collapsing a
+			{
+				margin-top:6px;
+			}
+			.navbar-nav .dropdown-menu:before,.navbar-nav .dropdown-menu:after
+			{
+				display:none;
+			}
+			.show .dropdown-item
+			{
+				padding-left:45px;
+			}
+			.show .dropdown-menu
+			{
+				background:#fafafa;
+				left:-50%;
+			}
+			.dropdown-menu .dropdown-item:hover{
+				background:transparent;
+				color:#ef8157 !important;
+			}
+			.dropdown-menu .dropdown-item.active{
+				background:transparent;
+				color:#ef8157 !important;
+			}
+		
 			</style>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
-                            <li class="nav-item <?php echo $this->uri->segment(1)==''?'active':''?>">
-                                <a class="nav-link" href="./">HOME</a>
-                            </li>
-                            <li class="nav-item <?php echo $this->uri->segment(1)=='selected-validators'?'active':''?>">
-                                <a class="nav-link" href="./selected-validators">SELECTED VALIDATORS</a>
-                            </li>
-                            <li class="nav-item <?php echo $this->uri->segment(1)=='reward'?'active':''?>">
-                                <a class="nav-link" href="./reward">REWARD</a>
-                            </li>
-                            <li class="nav-item <?php echo $this->uri->segment(1)=='chart'?'active':''?>">
-                                <a class="nav-link" href="./chart">CHARTS</a>
-                            </li>
-                            <li class="nav-item <?php echo $this->uri->segment(1)=='stake-guide'?'active':''?>">
-                                <a class="nav-link" href="./stake-guide">STAKING GUIDE</a>
-                            </li>
+							 <li class="nav-item dropdown <?php echo $this->uri->segment(1)!='storeman'?'active':''?>">
+								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								  GALAXY POS
+								</a>
+								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+								  <a class="dropdown-item <?php echo $this->uri->segment(1)==''?'active':''?>"" href="./">VALIDATORS</a>
+								  <a class="dropdown-item" <?php echo $this->uri->segment(1)=='selected-validators'?'active':''?>" href="./selected-validators">SELECTED VALIDATORS</a>
+								<a class="dropdown-item <?php echo $this->uri->segment(1)=='reward'?'active':''?>"" href="./reward">REWARD</a>
+								<a class="dropdown-item <?php echo $this->uri->segment(1)=='chart'?'active':''?>"" href="./chart">CHARTS</a>
+								<a class="dropdown-item <?php echo $this->uri->segment(1)=='stake-guide'?'active':''?>"" href="./stake-guide">STAKING GUIDE</a>
+									
+								</div>
+							  </li>
+							
 							<li class="nav-item <?php echo $this->uri->segment(1)=='storeman'?'active':''?>">
                                 <a class="nav-link" href="./storeman">STOREMEN</a>
                             </li>
@@ -127,6 +152,6 @@
 
         </nav>
 		
-		<div class="alert alert-info text-center"><i class="fa fa-heart"></i> Support us by staking with <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/vld/0x2a2fee5d3aefdcddd8247e3ea094a591323f3879" target="_blank">Our POS Validators</a></b> or <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/storemaninfo/0x92dce4f5857cad9208a2f168445e3670d4f84d74?groupid=0x000000000000000000000000000000000000000000000041726965735f303031" target="_blank">Our Storeman Node</a></b><i class="fa fa-heart"></i></div>
+		<div class="alert alert-info text-center"><i class="fa fa-heart"></i> Support us by staking with <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/vld/0x2a2fee5d3aefdcddd8247e3ea094a591323f3879" target="_blank">Our POS Validators</a></b> or <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/storemaninfo/0x92dce4f5857cad9208a2f168445e3670d4f84d74?groupid=0x000000000000000000000000000000000000000000000041726965735f303031" target="_blank">Our Storeman Node</a></b> <i class="fa fa-heart"></i></div>
 
        
