@@ -244,16 +244,16 @@
                                     <b>From Fee (<?php echo $validator['feeRate']?>%) : </b><?php echo round($validator['delegated_fee_amount'],5)?> WAN
                                 </td>
                                 <td>
-                                    <?php if ($validator['delegators']):?>
+                                    <?php if (count($validator['delegators'])):?>
                                     <span style="font-size:18px;"><?php echo number_format($validator['delegator_incentive'],2)?> WAN</span>
                                     <br/>
-                                        <b># Delegator:</b> <?php echo number_format($validator['delegators'])?>
+                                        <b># Delegator:</b> <?php echo number_format(count($validator['delegators']))?>
                                     <?php else:?>
                                         -
                                     <?php endif;?>
                                 </td>
                                 <td>
-                                    <?php if ($validator['delegators']):?>
+                                    <?php if (count($validator['delegators'])):?>
                                     <b>Estimated Reward: </b><?php echo number_format($validator['reward_ratio']*100/1000000,5)?> WAN
                                         <i style="cursor:pointer" class="fa fa-question-circle text-danger"  data-toggle="tooltip" data-html="true" title="This is a reward per 100 WAN and calculated by<br/><b>Delegator Reward / Total Delegated x 100</b>"></i>
                                         <br/>

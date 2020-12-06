@@ -23,7 +23,7 @@ class Welcome extends CI_Controller {
     private function _getLeaderGroupByEpoch($epoch_id)
     {
 
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -70,17 +70,18 @@ class Welcome extends CI_Controller {
 				}
             $result = json_decode($client->receive(),true);
 
-
+			
             // Save into the cache for 1 days
             if (isset($result['result']) && $result['result'])
             {
                 $result['result']['epochId'] = $epoch;
                 $result = serialize($result['result']);
                 $this->cache->save($method.'_'.$epoch, $result, 2592000);
+				
                 sleep(1);
             }
             else{
-
+				
                 $result = '';
                 $this->output->delete_cache();
             }
@@ -120,14 +121,16 @@ class Welcome extends CI_Controller {
         }
 
         $epochinfo = unserialize($epochinfo);
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
 
         $epoch = $epochinfo['epochId']-$epoch_dec;
         $method = 'getEpochIncentivePayDetail';
-
+		
+		
+		
         $result = $this->cache->get($method.'_'.$epoch);
         if (!$result)
         {
@@ -183,7 +186,7 @@ class Welcome extends CI_Controller {
     private function _getCurrentEpochInfo()
     {
 
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -245,7 +248,7 @@ class Welcome extends CI_Controller {
         }
 
         $epochinfo = unserialize($epochinfo);
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -314,7 +317,7 @@ class Welcome extends CI_Controller {
 
 	private function _getCurrentStakerInfo()
     {
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -372,7 +375,7 @@ class Welcome extends CI_Controller {
 
     private function _getStakerInfo($block_height)
     {
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -429,7 +432,7 @@ class Welcome extends CI_Controller {
 
     private function _getBlockIncentive($epochId)
     {
-        $client = new Client($this->config->item('iwan_client'));
+        $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
 
@@ -629,7 +632,7 @@ class Welcome extends CI_Controller {
                     }
 
 
-                    $client = new Client($this->config->item('iwan_client'));
+                    $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
                     $secret = $this->config->item('iwan_secret');
                     $timestamp = round(microtime(true) * 1000);
 
@@ -1344,6 +1347,7 @@ class Welcome extends CI_Controller {
         }
 
         $all_validator = array();
+		//echo '<pre>';
         foreach($pay_reward as $reward)
         {
             if (!$reward['address']) continue;
@@ -1351,7 +1355,7 @@ class Welcome extends CI_Controller {
             {
                 $all_validator[$reward['address']]=array(
                     'incentive'=>0,
-                    'delegators'=>0,
+                    'delegators'=>array(),
                     'delegator_incentive'=>0,
                     'reward_ratio'=>0,
                     'leader_count'=>0,
@@ -1359,11 +1363,15 @@ class Welcome extends CI_Controller {
                     'delegated_fee_amount'=>0
                 );
             }
-
+			
+			
+			//print_r($reward['delegators']);
+			//die();
+			
             if (isset($reward['delegators']))
             foreach($reward['delegators'] as $delegator)
             {
-                $all_validator[$reward['address']]['delegators']++;
+                $all_validator[$reward['address']]['delegators'][$delegator['address']] = 1;
                 $all_validator[$reward['address']]['delegator_incentive']+=hexdec($delegator['incentive'])/WAN_DIGIT;
 
                 $rate = 1+($all_validator_stake[$reward['address']]['feeRate']/100)/100;
@@ -1470,7 +1478,7 @@ class Welcome extends CI_Controller {
             }
 
             // About Reward //
-            $client = new Client($this->config->item('iwan_client'));
+            $client = new Client($this->config->item('iwan_client'), ['timeout' => 60]);
             $secret = $this->config->item('iwan_secret');
             $timestamp = round(microtime(true) * 1000);
             $this->load->driver('cache', array('adapter' => 'file'));
@@ -1787,14 +1795,18 @@ class Welcome extends CI_Controller {
             }
             else
                 {
-                    echo $row['COUNT'].' times - FOUNDATION\'S NODE (Non-Reward)';
+					continue;
+                    //echo $row['COUNT'].' times - FOUNDATION\'S NODE (Non-Reward)';
                 }
             echo '<br/>';
         }
         echo '-------------------------------------------<br/>';
         $pay_reward = $this->_getEpochIncentivePayDetail();
-
+	
         $pay_reward = (unserialize($pay_reward));
+		
+		
+		
         $total_delegators = 0;
         $total_incentive = 0;
         $total_validator_incentive = 0;
@@ -1929,12 +1941,18 @@ class Welcome extends CI_Controller {
             $string = '('.implode(', ',$tmp_array).')';
 
             //echo $reward['JOBS_COUNT'].'<br/>';
-            echo $validator['name'].' - '.number_format(($reward['validator']+$reward['delegator']),2).' WAN '.$string.'<br/>';
+            echo  $validator['name'].' - '.number_format(($reward['validator']+$reward['delegator']),2).' WAN '.$string.'<br/>';
         }
         echo '-------------------------------------------<br/>';
         echo '🔗 Full info at www.wanstakeinsight.com<br/>';
-        //echo '❤ Support us by staking on validator "CryptoFennec" :3';
+        echo '❤ Staking with "Wanstakeinsight.com" POS Validator | Storeman Node';
     }
+	
+	
+	
+	
+	
+	
 	
 	private function _api_error()
 	{
