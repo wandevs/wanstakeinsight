@@ -189,14 +189,63 @@ class Storeman extends CI_Controller {
         return $result;
     }
 	
+	
+	private function _getRewardRatio()
+    {
+        $client = new Client($this->config->item('iwan_client'));
+        $secret = $this->config->item('iwan_secret');
+        $timestamp = round(microtime(true) * 1000);
+        $this->load->driver('cache', array('adapter' => 'file'));
+        $method = 'getRewardRatio';
+        if (!$result = $this->cache->get($method))
+        {
+            $params_array = array(
+				//'wkAddr' => '0x92Dce4f5857CAD9208A2f168445e3670D4f84d74',
+				//'toBlock' => 11765038,
+				
+                'timestamp' => $this->config->item('iwan_timestamp')
+            );
+            $signature_message = array(
+                'jsonrpc' => '2.0',
+                'method' => $method,
+                'params' => $params_array,
+                'id' => 0,
+            );
+            $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
+            $params_array["signature"] = $signature;
+            $query_array = array(
+                'jsonrpc' => '2.0',
+                'method' => $method,
+                'params' => $params_array,
+                'id' => 0,
+            );
+
+            $query_string = json_encode($query_array);
+
+            $client->send($query_string);
+            $result = json_decode($client->receive(), true);
+
+            if (isset($result['result']) && $result['result']) {
+
+                $result = $result['result'];
+
+                //$this->cache->save($method, $result, 360); // 1 hour
+            } else {
+                $result = '';
+                $this->output->delete_cache();
+            }
+        }
+        return $result;
+    }
+	
 	public function seeAPI()
 	{
 		//echo (1224387189358602196)/WAN_DIGIT;
 		echo '<pre>';
 		//print_r($this->_getStoremanGroupInfo('0x000000000000000000000000000000000000000000000041726965735f303031'));
-		print_r($this->_getStoremanStakeTotalIncentive());
+		//print_r($this->_getStoremanStakeTotalIncentive());
 		//print_r($this->_getStoremanGroupMember('0x000000000000000000000000000000000000000000000041726965735f303031'));
-		
+		echo $this->_getRewardRatio();
 		
 		
 	}
