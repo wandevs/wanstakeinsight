@@ -155,42 +155,63 @@
 									
 									<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
+										if ($stat['asset_amount'] != $stat['last_24hrs_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_24hrs_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_24hrs_amount'])/$stat['last_24hrs_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_24hrs_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_24hrs_amount'])/$stat['last_24hrs_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_24hrs_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_24hrs_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_24hrs_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_24hrs_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 										</td>
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_7days_amount'])
+										if ($stat['asset_amount'] != $stat['last_7days_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_7days_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_7days_amount'])/$stat['last_7days_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_7days_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_7days_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_7days_amount'])/$stat['last_7days_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_7days_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_7days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_7days_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_7days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 									</td>
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_30days_amount'])
+										if ($stat['asset_amount'] != $stat['last_30days_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_30days_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_30days_amount'])/$stat['last_30days_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_30days_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_30days_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_30days_amount'])/$stat['last_30days_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_30days_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_30days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_30days_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_30days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 									</td>
@@ -293,44 +314,66 @@
                                         ?>
 									</td>
 									
+									
 									<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
+										if ($stat['asset_amount'] != $stat['last_24hrs_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_24hrs_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_24hrs_amount'])/$stat['last_24hrs_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_24hrs_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_24hrs_amount'])/$stat['last_24hrs_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_24hrs_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_24hrs_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_24hrs_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_24hrs_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 										</td>
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_7days_amount'])
+										if ($stat['asset_amount'] != $stat['last_7days_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_7days_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_7days_amount'])/$stat['last_7days_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_7days_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_7days_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_7days_amount'])/$stat['last_7days_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_7days_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_7days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_7days_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_7days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 									</td>
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] >= $stat['last_30days_amount'])
+										if ($stat['asset_amount'] != $stat['last_30days_amount'])
 										{
-											echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_30days_amount'],2);
-											echo ' ('.round((($stat['asset_amount']-$stat['last_30days_amount'])/$stat['last_30days_amount'])*100,2).'%)</div>';
+											if ($stat['asset_amount'] >= $stat['last_30days_amount'])
+											{
+												echo '<div class="text-success">+'.custom_number_format($stat['asset_amount']-$stat['last_30days_amount'],2);
+												echo ' ('.round((($stat['asset_amount']-$stat['last_30days_amount'])/$stat['last_30days_amount'])*100,2).'%)</div>';
+											}
+											else{
+												echo '<div class="text-danger">-'.custom_number_format($stat['last_30days_amount']-$stat['asset_amount'],2);
+												echo ' ('.round((($stat['last_30days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+											}
 										}
-										else{
-											echo '<div class="text-danger">-'.custom_number_format($stat['last_30days_amount']-$stat['asset_amount'],2);
-											echo ' ('.round((($stat['last_30days_amount']-$stat['asset_amount'])/$stat['asset_amount'])*100,2).'%)</div>';
+										else
+										{
+											echo '';
 										}
                                         ?>
 									</td>
