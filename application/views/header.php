@@ -147,8 +147,11 @@
 							<li class="nav-item <?php echo $this->uri->segment(1)=='storeman'?'active':''?>">
                                 <a class="nav-link" href="./storeman">STOREMEN</a>
                             </li>
-							<li class="nav-item <?php echo $this->uri->segment(1)=='token'?'active':''?>">
+							<li class="nav-item <?php echo $this->uri->segment(1)=='token' && $this->uri->segment(2)==''?'active':''?>">
                                 <a class="nav-link" href="./token">CONVERTED ASSETS</a>
+                            </li>
+							<li class="nav-item <?php echo $this->uri->segment(2)=='wasp'?'active':''?>">
+                                <a class="nav-link" href="./token/wasp">$WASP</a>
                             </li>
 							
                         </ul>

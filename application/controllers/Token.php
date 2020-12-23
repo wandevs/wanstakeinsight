@@ -6,7 +6,7 @@ class Token extends CI_Controller {
 	private function _getprice()
 	{
 		// connect via SSL, but don't check cert
-		$handle=curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,EOS,USDT,WAN,FNX&tsyms=USD,CNY');
+		$handle=curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,EOS,USDT,USDC,WAN,FNX&tsyms=USD,CNY');
 		curl_setopt($handle, CURLOPT_VERBOSE, true);
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
@@ -202,6 +202,40 @@ class Token extends CI_Controller {
 		
 		echo 'Cumulative Total Value: '.number_format($tvl),'$';
 	}
+	
+	function wasp_text()
+	{
+		function custom_format($number)
+		{
+			$tmp = floor($number);
+			$digit = $number - $tmp;
+			$tmp = number_format($tmp);
+			return $tmp.'.'.substr(str_replace('0.','',$digit.''),0,6);
+		}
+		$price = json_decode($this->_getprice(),true);
+		$token0 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+		sleep(1);
+		
+		
+		$token1 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48')/WAN_DIGIT;
+		sleep(1);
+		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
+		
+		echo 'Price & Supply<br/>-------------------<br/>';
+		echo 'Supply = '.number_format($wasp_supply).' WASP<br/>';
+		echo '1 WAN = '. number_format($token0/$token1,2).' WASP<br/>';
+		$rate = $token0/$token1;
+		$wan_reflect = $token0/$rate;
+		echo '1 WASP = '.number_format($price['WAN']['USD']/$rate,5).' USD<br/><br/>';
+		echo 'Liquidity Pool<br/>-------------------<br/>';
+		echo 'Pool Size = '. number_format($wan_reflect*$price['WAN']['USD']+$token1*$price['WAN']['USD']).' USD<br/>';
+		echo number_format($token0).' WASP | ';
+		echo number_format($token1).' WAN';
+		
+		echo '<br/>-------------------<br/>'.date('Y-m-d H:i',time()).'Z';
+	}
+	
+	
 	private function insert_db($asset_name,$asset_amount,$asset_price,$chain,$timestamp)
 		{
 			if (!isset($asset_amount) || !$asset_amount)
@@ -243,6 +277,10 @@ class Token extends CI_Controller {
 		// wanUSDT //
 		$amount = $this->_getTokenSupply('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN')/1000000;
 		$this->insert_db('wanUSDT',$amount,$price['USDT']['USD'],'wan',$timestamp);
+		sleep(3);
+		// wanUSDC //
+		$amount = $this->_getTokenSupply('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN')/1000000;
+		$this->insert_db('wanUSDC',$amount,$price['USDC']['USD'],'wan',$timestamp);
 		sleep(3);
 		//============Ethereum=============//
 		// WAN //
@@ -366,7 +404,7 @@ table.cinereousTable thead th:first-child {
 	{
 		$this->output->cache(30);
 		$this->load->database();
-		$wanchain_assets = array('WWAN','wanETH','wanBTC','wanEOS','wanUSDT');
+		$wanchain_assets = array('WWAN','wanETH','wanBTC','wanEOS','wanUSDT','wanUSDC');
 		$ethereum_assets = array('WAN','wanBTC','wanEOS');
 		$view['asset_icons'] = array(
 			'WWAN' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wwan.png',
@@ -374,7 +412,8 @@ table.cinereousTable thead th:first-child {
 			'wanETH' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanETH.png',
 			'wanBTC' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanBTC.png',
 			'wanEOS' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanEOS.png',
-			'wanUSDT' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanUSDT.png'
+			'wanUSDT' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanUSDT.png',
+			'wanUSDC' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanUSDC.png'
 		);
 		
 		$view['wanchain_tvl'] = 0;
@@ -442,6 +481,50 @@ table.cinereousTable thead th:first-child {
 		$view['ethereum_asset_count'] = count($ethereum_assets);
 		$view['web_title'] = 'CONVERTED ASSETS';
         $this->load->view('token',$view);
+	}
+	
+	function wasp()
+	{
+		$this->output->cache(30);
+		function custom_format($number)
+		{
+			$tmp = floor($number);
+			$digit = $number - $tmp;
+			$tmp = number_format($tmp);
+			return $tmp.'.'.substr(str_replace('0.','',$digit.''),0,4);
+		}
+		$price = json_decode($this->_getprice(),true);
+		$token0 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+		sleep(1);
+		
+		$token1 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48')/WAN_DIGIT;
+		sleep(1);
+		
+		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
+		sleep(1);
+		
+		$unclaim = $this->_getTokenBalance('0x7e5Fe1E587a5C38b4a4a9BA38A35096f8ea35AAc','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+		sleep(1);
+		
+		$burned = $this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+
+		
+		$rate = $token0/$token1;
+		$wan_reflect = $token0/$rate;
+		
+		
+		$view['wasp_supply'] = number_format($wasp_supply);
+		$view['wasp_unclaimed'] = number_format($unclaim);
+		$view['wasp_burned'] = number_format($burned);
+		$view['wasp_burned_percent'] = number_format($burned*100/$wasp_supply,2);
+		$view['exchange_rate'] = number_format($token0/$token1,2);
+		$view['wasp_price'] = number_format($price['WAN']['USD']/$rate,4);
+		$view['pool_size'] = number_format($wan_reflect*$price['WAN']['USD']+$token1*$price['WAN']['USD']);
+		$view['pool_wasp'] = number_format($token0);
+		$view['pool_wan'] = number_format($token1);
+		$view['timestamp'] = date('Y-m-d H:i',time()).'Z';
+		$view['web_title'] = '$WASP TOKEN';
+        $this->load->view('wasp',$view);
 	}
 	
 }
