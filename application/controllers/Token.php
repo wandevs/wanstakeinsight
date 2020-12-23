@@ -485,7 +485,7 @@ table.cinereousTable thead th:first-child {
 	
 	function wasp()
 	{
-		$this->output->cache(30);
+		//$this->output->cache(10);
 		function custom_format($number)
 		{
 			$tmp = floor($number);

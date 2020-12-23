@@ -59,14 +59,14 @@
                 </div>
                </div>
 			   
-			   <div style="padding:30px;border-radius:15px;background:#00000008;margin-top:40px;position:relative">
+			   <div class="pool" style="">
 			   <div style="position:absolute;right:0;top:0;padding:5px 20px;font-size:12px;background:#00000015;border-top-right-radius:15px;border-bottom-left-radius:15px;"><i class="fa fa-clock-o"></i> <?php echo $timestamp?></div>
-			   <h3 style="text-align:center;"><b>WASP/WAN</b> POOL</h3>
+			   <h3 style="text-align:center;position:relative"><b>WASP/WAN</b> POOL</h3>
 			   <h5 style="margin-top: -30px;margin-bottom:30px;text-align: center;">Deposited ~<?php echo $pool_size?> USD</h5>
 			   <div class="row">
 			   
                 <div class="col-md-6">
-                    <div class="card card-stats">
+                    <div class="card card-stats" style="background:rgba(255,255,255,0.7)">
                         <div class="card-body ">
                             <div class="row">
                                 <div class="col-12">
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card card-stats">
+                    <div class="card card-stats" style="background:rgba(255,255,255,0.7)">
                         <div class="card-body ">
                             <div class="row">
                                 <div class="col-12">
@@ -105,6 +105,7 @@
 			   </div>
         </div>
 <style>
+
 .main-panel>.content
 {
 	min-height:auto;
@@ -112,6 +113,20 @@
 .wrapper
 {
 	background:#f4f3ef;
+}
+.pool
+{
+	padding:30px;border-radius:15px;background:#00000008;margin-top:40px;background-image: url(./assets/img/wasp.svg);
+    background-repeat: no-repeat;
+    background-position-y: 30%;
+    background-size: 450px;
+    background-position-x: 50%;box-shadow:0 6px 10px -4px rgba(0, 0, 0, 0.15)
+}
+@media only screen and (min-width: 767px) {
+	.pool
+	{
+		background-size: 300px !important;
+	}
 }
 </style>
 

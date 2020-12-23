@@ -1420,7 +1420,7 @@ class Welcome extends CI_Controller {
     public function chart()
     {
         error_reporting(0);
-        $this->output->cache(30);
+        $this->output->cache(180);
         // Get Current Epoch//
         $epochinfo = $this->_getCurrentEpochInfo();
         if ($epochinfo=='')
