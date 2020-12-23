@@ -85,7 +85,7 @@ class Storeman extends CI_Controller {
 
                 $result = $result['result'];
 
-                $this->cache->save($method.'_'.$groupId, $result, 360); // 1 hour
+                $this->cache->save($method.'_'.$groupId, $result, 3600); // 1 hour
             } else {
                 $result = '';
                 $this->output->delete_cache();
@@ -252,6 +252,7 @@ class Storeman extends CI_Controller {
 	
 	public function index()
 	{
+		$this->output->cache(15);
 		//echo '<pre>';
 		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
 		$groupName = 'Aries_001';
