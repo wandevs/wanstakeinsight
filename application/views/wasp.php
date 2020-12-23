@@ -120,7 +120,8 @@
     background-repeat: no-repeat;
     background-position-y: 30%;
     background-size: 450px;
-    background-position-x: 50%;box-shadow:0 6px 10px -4px rgba(0, 0, 0, 0.15)
+    background-position-x: 50%;box-shadow:0 6px 10px -4px rgba(0, 0, 0, 0.15);
+	position:relative;
 }
 @media only screen and (min-width: 767px) {
 	.pool
