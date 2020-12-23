@@ -8,16 +8,17 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="numbers text-center">
-                                        <p class="card-category">WASP TOTAL SUPPLY</b></p>
+                                        <p class="card-category">CURRENT WASP SUPPLY</b></p>
                                         <p class="card-title" style="font-size:25px;">
-										<?php echo $wasp_supply?> WASP
+										
+											<?php echo $wasp_supply?> WASP
                                         </p>
                                     </div>
                                 </div>
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center">Unclaimed <?php echo $wasp_unclaimed?> WASP</div>
+						<div class="card-footer text-center"><hr/><div class="stats">Unclaimed <?php echo $wasp_unclaimed?> WASP</div></div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-4">
@@ -35,7 +36,7 @@
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center">Price ~<?php echo $wasp_burned_percent?> USD</div>
+						<div class="card-footer text-center"><hr/><div class="stats">Price ~<?php echo $wasp_price?> USD</div></div>
                     </div>
                 </div>
 				<div class="col-md-12 col-lg-4">
@@ -53,7 +54,7 @@
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center">Burned <?php echo $wasp_burned_percent?>% of supply</div>
+						<div class="card-footer text-center"><hr/><div class="stats">Burned <?php echo $wasp_burned_percent?>% of supply</div></div>
                     </div>
                 </div>
                </div>
@@ -76,10 +77,10 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center"></div>
+                                
                             </div>
                         </div>
-						
+						<div class="card-footer text-center"><hr/><div class="stats"><?php echo $pool_wasp_percentage?>% of WASP supply</div></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -90,14 +91,14 @@
                                     <div class="numbers text-center">
                                         <p class="card-category">WAN AMOUNT</b></p>
                                         <p class="card-title" style="font-size:25px;">
-											<?php echo $pool_wan?> WASP
+											<?php echo $pool_wan?> WAN
                                         </p>
                                     </div>
                                 </div>
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center"></div>
+						<div class="card-footer text-center"><hr/><div class="stats"><?php echo $pool_wan_percentage?>% of WWAN supply</div></div>
                     </div>
                 </div>
                </div>

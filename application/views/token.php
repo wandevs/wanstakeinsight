@@ -17,7 +17,7 @@
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center"><?php echo $wanchain_asset_count?> Assets</div>
+						<div class="card-footer text-center"><hr/><div class="stats"><?php echo $wanchain_asset_count?> Assets</div></div>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -35,7 +35,7 @@
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center"><?php echo $ethereum_asset_count?> Assets</div>
+						<div class="card-footer text-center"><hr/><div class="stats"><?php echo $ethereum_asset_count?> Assets</div></div>
                     </div>
                 </div>
                </div>

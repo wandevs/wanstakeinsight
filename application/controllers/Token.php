@@ -507,7 +507,10 @@ table.cinereousTable thead th:first-child {
 		sleep(1);
 		
 		$burned = $this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-
+		sleep(1);
+		
+		
+		$wwan_supply = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN')/WAN_DIGIT;
 		
 		$rate = $token0/$token1;
 		$wan_reflect = $token0/$rate;
@@ -517,11 +520,14 @@ table.cinereousTable thead th:first-child {
 		$view['wasp_unclaimed'] = number_format($unclaim);
 		$view['wasp_burned'] = number_format($burned);
 		$view['wasp_burned_percent'] = number_format($burned*100/$wasp_supply,2);
+		
 		$view['exchange_rate'] = number_format($token0/$token1,2);
 		$view['wasp_price'] = number_format($price['WAN']['USD']/$rate,4);
 		$view['pool_size'] = number_format($wan_reflect*$price['WAN']['USD']+$token1*$price['WAN']['USD']);
 		$view['pool_wasp'] = number_format($token0);
+		$view['pool_wasp_percentage'] = number_format($token0*100/$wasp_supply,2);
 		$view['pool_wan'] = number_format($token1);
+		$view['pool_wan_percentage'] = number_format($token1*100/$wwan_supply,2);
 		$view['timestamp'] = date('Y-m-d H:i',time()).'Z';
 		$view['web_title'] = '$WASP TOKEN';
         $this->load->view('wasp',$view);
