@@ -129,7 +129,7 @@
 			</style>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
-							 <li class="nav-item dropdown <?php echo !in_array($this->uri->segment(1),array('storeman','token'))?'active':''?>">
+							 <li class="nav-item dropdown <?php echo !in_array($this->uri->segment(1),array('storeman','token','address'))?'active':''?>">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								  GALAXY POS
 								</a>
@@ -150,9 +150,13 @@
 							<li class="nav-item <?php echo $this->uri->segment(1)=='token' && $this->uri->segment(2)==''?'active':''?>">
                                 <a class="nav-link" href="./token">CONVERTED ASSETS</a>
                             </li>
+							<li class="nav-item <?php echo $this->uri->segment(1)=='address'?'active':''?>">
+                                <a class="nav-link" href="./address">TOP 50</a>
+                            </li>
 							<li class="nav-item <?php echo $this->uri->segment(2)=='wasp'?'active':''?>">
                                 <a class="nav-link" href="./token/wasp">$WASP</a>
                             </li>
+							
 							
                         </ul>
                     </div>
