@@ -483,9 +483,27 @@ table.cinereousTable thead th:first-child {
         $this->load->view('token',$view);
 	}
 	
+	// Cron call for pre-cached
+	function sync_wasp()
+	{
+		$this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
+		sleep(1);
+		$this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48');
+		sleep(1);
+		$this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN');
+		sleep(1);
+		$this->_getTokenBalance('0x7e5Fe1E587a5C38b4a4a9BA38A35096f8ea35AAc','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
+		sleep(1);
+		$this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
+		sleep(1);
+		$this->_getTokenBalance('0x93f98C2216B181846e1C92e7Deb06911373e1f37','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
+		sleep(1);
+		$this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
+	}
+	
 	function wasp()
 	{
-		//$this->output->cache(10);
+		$this->output->cache(10);
 		function custom_format($number)
 		{
 			$tmp = floor($number);
@@ -495,34 +513,36 @@ table.cinereousTable thead th:first-child {
 		}
 		$price = json_decode($this->_getprice(),true);
 		$token0 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-		sleep(1);
 		
 		$token1 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48')/WAN_DIGIT;
-		sleep(1);
 		
 		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
-		sleep(1);
 		
 		$unclaim = $this->_getTokenBalance('0x7e5Fe1E587a5C38b4a4a9BA38A35096f8ea35AAc','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-		sleep(1);
 		
 		$burned = $this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-		sleep(1);
+		
+		// HIVE //
+		$wasp_hive = $this->_getTokenBalance('0x93f98C2216B181846e1C92e7Deb06911373e1f37','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+		
 		
 		
 		$wwan_supply = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN')/WAN_DIGIT;
 		
 		$rate = $token0/$token1;
 		$wan_reflect = $token0/$rate;
-		
+		$view['wasp_price'] = number_format($price['WAN']['USD']/$rate,4);
 		
 		$view['wasp_supply'] = number_format($wasp_supply);
 		$view['wasp_unclaimed'] = number_format($unclaim);
 		$view['wasp_burned'] = number_format($burned);
 		$view['wasp_burned_percent'] = number_format($burned*100/$wasp_supply,2);
+		$view['wasp_hive'] = number_format($wasp_hive);
+		$view['wasp_hive_size'] = number_format($wasp_hive*$view['wasp_price']);
+		$view['wasp_hive_percent'] = number_format($wasp_hive*100/$wasp_supply,2);
 		
 		$view['exchange_rate'] = number_format($token0/$token1,2);
-		$view['wasp_price'] = number_format($price['WAN']['USD']/$rate,4);
+		
 		$view['pool_size'] = number_format($wan_reflect*$price['WAN']['USD']+$token1*$price['WAN']['USD']);
 		$view['pool_wasp'] = number_format($token0);
 		$view['pool_wasp_percentage'] = number_format($token0*100/$wasp_supply,2);
