@@ -60,7 +60,7 @@ class Token extends CI_Controller {
 
                 $result = $result['result'];
 
-                $this->cache->save($method.'_'.$address, $result, 360); // 1 hour
+                $this->cache->save($method.'_'.$address, $result, 300); // 5 mins
             } else {
                 $result = '';
                 $this->output->delete_cache();
@@ -253,8 +253,9 @@ class Token extends CI_Controller {
 			$view['wanchain_stats'][] = $row;
 		}
 		
+		
 		uasort($view['wanchain_stats'], function ($a, $b) {
-                    return $b['asset_tvl'] - $a['asset_tvl'];
+             return $b['asset_tvl'] - $a['asset_tvl'];
         });
 		
 		$view['ethereum_tvl'] = 0;
@@ -315,7 +316,7 @@ class Token extends CI_Controller {
 	
 	function wasp()
 	{
-		$this->output->cache(10);
+		//$this->output->cache(10);
 		function custom_format($number)
 		{
 			$tmp = floor($number);
@@ -361,6 +362,22 @@ class Token extends CI_Controller {
 		$view['pool_wan'] = number_format($token1);
 		$view['pool_wan_percentage'] = number_format($token1*100/$wwan_supply,2);
 		$view['timestamp'] = date('Y-m-d H:i',time()).'Z';
+		
+		// Get Chart data //
+		$this->load->database();
+		$sql ='SELECT id, MAX( wasp_price ) as wasp_price , SUM( volume_changed ) as volume_changed , timestamp
+FROM wasp_stats
+GROUP BY HOUR( timestamp ) ORDER BY id ASC';
+//$sql ='SELECT exchange_rate, wasp_price, volume_changed , timestamp FROM wasp_stats';
+		$query = $this->db->query($sql);
+		$chart_data = $query->result_array();
+		$view['chart_data'] = $chart_data;
+		
+		// Gett MAX MIN AVG //
+		$sql ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats';
+		$query = $this->db->query($sql);
+		$day_summary = $query->row_array();
+		$view['day_summary'] = $day_summary;
 		$view['web_title'] = '$WASP TOKEN';
         $this->load->view('wasp',$view);
 	}

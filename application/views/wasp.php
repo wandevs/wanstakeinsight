@@ -59,6 +59,26 @@
                 </div>
                </div>
 			   
+			   <div class="row">
+				<div class="col-md-12">
+					<div class="card card-stats">
+							<div class="card-body ">
+							<div class="numbers text-center">
+								24 hours $WASP Price
+								<div style="flex-wrap:wrap;display:flex;align-items:center;justify-content:space-around;font-size:15px;padding-top:15px;padding-bottom:15px;">
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Highest<br/><b><?php echo round($day_summary['max_price'],4)?>$</b></div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">LOWEST<br/><b><?php echo round($day_summary['min_price'],4)?>$</b></div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">AVERAGE<br/><b><?php echo round($day_summary['avg_price'],4)?>$</b> </div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">TOTAL VOLUME<br/><b><?php echo number_format($day_summary['sum_volume'],2)?> WASP</b></div>
+								</div>
+							</div>
+						<canvas id="wasp_stat_chart"></canvas>
+						</div>
+					</div>
+				</div>
+			   
+			   </div>
+			   
 			   <div class="pool">
 			   <div style="position:absolute;right:0;top:0;padding:5px 20px;font-size:12px;background:#00000015;border-top-right-radius:15px;border-bottom-left-radius:15px;"><i class="fa fa-clock-o"></i> <?php echo $timestamp?></div>
 			   <h3 style="text-align:center;position:relative;opacity:0.6"><b>WASP/WAN</b> POOL</h3>
@@ -164,6 +184,9 @@
 }
 </style>
 
-<?php $this->load->view('footer',array('js'=>'storeman_js'))?>
+<?php $this->load->view('footer',array(
+        'js'=>'wasp_js',
+		'wasp_stat'=>$chart_data,
+))?>
 
 

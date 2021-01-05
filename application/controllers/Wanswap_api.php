@@ -196,6 +196,55 @@ class Wanswap_api extends CI_Controller {
 		return $list;
 		
 	}
+	private function _getprice()
+	{
+		// connect via SSL, but don't check cert
+		$handle=curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=WAN&tsyms=USD');
+		curl_setopt($handle, CURLOPT_VERBOSE, true);
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+		$content = curl_exec($handle);
+
+		return $content; // show target page
+	}
+	public function sync_wasp_stat()
+	{
+		$list = $this->_pair_list();
+		$this->load->database();
+		$pair = $list[0];
+		
+		$price = json_decode($this->_getprice(),true);
+		$timestamp = date('Y-m-d H:i',time());
+		
+		$wasp_amount = $this->_getTokenBalance($pair['pair_address'],$pair['quote_address'])/$pair['quote_decimal'];
+		$wan_amount = $this->_getTokenBalance($pair['pair_address'],$pair['base_address'])/$pair['base_decimal'];
+		if ($wasp_amount==0 || $wan_amount == 0)
+		die();
+		
+		$exchange_rate = $wasp_amount/$wan_amount; // to WAN
+		
+		
+		
+		// Get Lastest Wasp amount //
+		$wasp_lastest_amount = $this->db->select('wasp_amount')->order_by('id', 'desc')->limit(1)->get('wasp_stats')->row_array();
+		$wasp_lastest_amount = $wasp_lastest_amount['wasp_amount'];
+		
+		$volume_changed = abs(round($wasp_lastest_amount,18)-round($wasp_amount,18));
+		
+		
+		
+		
+		
+		$this->db->insert('wasp_stats',array(
+			'wasp_amount'=>$wasp_amount,
+			'wan_amount'=>$wan_amount,
+			'exchange_rate'=>$exchange_rate,
+			'wasp_price'=>$price['WAN']['USD']/$exchange_rate,
+			'volume_changed'=>$volume_changed,
+			'timestamp'=>$timestamp,
+		));
+	}
+	
 	public function cmc()
 	{
 		error_reporting(0);
