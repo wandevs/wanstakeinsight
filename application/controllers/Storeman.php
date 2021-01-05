@@ -3,9 +3,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use WebSocket\Client;
 class Storeman extends CI_Controller {
 	
+	public $client = null;
+	 public function __construct()
+	 {
+			parent::__construct();
+			// Your own constructor code
+			
+			$this->client = new Client($this->config->item('iwan_client'));
+	 }
+	
+	
 	private function _getStoremanGroupList()
     {
-        $client = new Client($this->config->item('iwan_client'));
+        
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -32,8 +42,8 @@ class Storeman extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-            $client->send($query_string);
-            $result = json_decode($client->receive(), true);
+            $this->client->send($query_string);
+            $result = json_decode($this->client->receive(), true);
 
             if (isset($result['result']) && $result['result']) {
 
@@ -50,7 +60,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanGroupMember($groupId)
     {
-        $client = new Client($this->config->item('iwan_client'));
+        
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -78,14 +88,14 @@ class Storeman extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-            $client->send($query_string);
-            $result = json_decode($client->receive(), true);
+            $this->client->send($query_string);
+            $result = json_decode($this->client->receive(), true);
 
             if (isset($result['result']) && $result['result']) {
 
                 $result = $result['result'];
 
-                $this->cache->save($method.'_'.$groupId, $result, 3600); // 1 hour
+                $this->cache->save($method.'_'.$groupId, $result, 600); // 10 mins
             } else {
                 $result = '';
                 $this->output->delete_cache();
@@ -96,7 +106,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanGroupInfo($groupId)
     {
-        $client = new Client($this->config->item('iwan_client'));
+        
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -125,8 +135,8 @@ class Storeman extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-            $client->send($query_string);
-            $result = json_decode($client->receive(), true);
+            $this->client->send($query_string);
+            $result = json_decode($this->client->receive(), true);
 
             if (isset($result['result']) && $result['result']) {
 
@@ -143,7 +153,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanStakeTotalIncentive()
     {
-        $client = new Client($this->config->item('iwan_client'));
+        
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -173,8 +183,8 @@ class Storeman extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-            $client->send($query_string);
-            $result = json_decode($client->receive(), true);
+            $this->client->send($query_string);
+            $result = json_decode($this->client->receive(), true);
 
             if (isset($result['result']) && $result['result']) {
 
@@ -192,7 +202,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getRewardRatio()
     {
-        $client = new Client($this->config->item('iwan_client'));
+        
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -222,8 +232,8 @@ class Storeman extends CI_Controller {
 
             $query_string = json_encode($query_array);
 
-            $client->send($query_string);
-            $result = json_decode($client->receive(), true);
+            $this->client->send($query_string);
+            $result = json_decode($this->client->receive(), true);
 
             if (isset($result['result']) && $result['result']) {
 
@@ -248,6 +258,12 @@ class Storeman extends CI_Controller {
 		echo $this->_getRewardRatio();
 		
 		
+	}
+	
+	public function sync_storeman()
+	{
+		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
+		$this->_getStoremanGroupMember($groupId);
 	}
 	
 	public function index()

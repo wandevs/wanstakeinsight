@@ -18,7 +18,7 @@ class Address extends CI_Controller {
 	
 	public function index()
 	{
-		//$this->output->cache(720); // 12
+		$this->output->cache(720); // 12
 		$view['lists'] = array();
 		for($i=1;$i<=5;$i++)
 		{
