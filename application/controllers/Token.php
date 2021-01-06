@@ -162,8 +162,32 @@ class Token extends CI_Controller {
 				'timestamp'=>$timestamp
 			));
 		}
+		
+	public function test_sync()
+	{
+		$this->load->database();
+		
+		$price = json_decode($this->_getprice(),true);
+		$timestamp = date('Y-m-d H:i',time());
+		
+		// wanBTC //
+		for($i=0;$i<5;$i++)
+		{
+		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
+		//$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'wan',$timestamp);
+		
+		echo $amount.'<br/>';
+		
+		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN')/10000;
+		echo $amount.'<br/>';
+		
+		$burned = $this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
+		echo $burned.'<br/>';
+		}
+	}
 	public function sync()
 	{
+		
 		
 		$this->load->database();
 		
@@ -174,40 +198,40 @@ class Token extends CI_Controller {
 		// WWan //
 		$amount = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN')/WAN_DIGIT;
 		$this->insert_db('WWAN',$amount,$price['WAN']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanETH //
 		$amount = $this->_getTokenSupply('0xe3Ae74d1518a76715Ab4c7bEdf1AF73893CD435a','WAN')/WAN_DIGIT;
 		$this->insert_db('wanETH',$amount,$price['ETH']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanBTC //
 		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
 		$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanEOS //
 		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN')/10000;
 		$this->insert_db('wanEOS',$amount,$price['EOS']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanUSDT //
 		$amount = $this->_getTokenSupply('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN')/1000000;
 		$this->insert_db('wanUSDT',$amount,$price['USDT']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanUSDC //
 		$amount = $this->_getTokenSupply('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN')/1000000;
 		$this->insert_db('wanUSDC',$amount,$price['USDC']['USD'],'wan',$timestamp);
-		sleep(3);
+		sleep(1);
 		//============Ethereum=============//
 		// WAN //
 		$amount = $this->_getTokenSupply('0x135B810e48e4307AB2a59ea294A6f1724781bD3C','ETH')/WAN_DIGIT;
 		$this->insert_db('WAN',$amount,$price['WAN']['USD'],'eth',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanBTC //
 		$amount = $this->_getTokenSupply('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH')/100000000;
 		$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'eth',$timestamp);
-		sleep(3);
+		sleep(1);
 		// wanEOS //
 		$amount = $this->_getTokenSupply('0x11167f7889ae34E2C6b15c9226D0b320C45d629D','ETH')/10000;
 		$this->insert_db('wanEOS',$amount,$price['EOS']['USD'],'eth',$timestamp);
-		sleep(3);
+		sleep(1);
 		
 	}
 	
@@ -314,9 +338,16 @@ class Token extends CI_Controller {
 		$this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
 	}
 	
-	function wasp()
+	function wasp($chart_type='day')
 	{
-		//$this->output->cache(10);
+		error_reporting(0);
+		if (!in_array($chart_type, array('day','week','month')))
+		{
+			$this->load->helper('url');
+			redirect('/token/wasp', 'refresh');
+			die();
+		}
+		$this->output->cache(10);
 		function custom_format($number)
 		{
 			$tmp = floor($number);
@@ -365,13 +396,39 @@ class Token extends CI_Controller {
 		
 		// Get Chart data //
 		$this->load->database();
-		$sql ='SELECT id, MAX( wasp_price ) as wasp_price , SUM( volume_changed ) as volume_changed , timestamp
-FROM wasp_stats
-GROUP BY HOUR( timestamp ) ORDER BY id ASC';
-//$sql ='SELECT exchange_rate, wasp_price, volume_changed , timestamp FROM wasp_stats';
+		if ($chart_type == 'day')
+		{
+			
+		$sql ='SELECT id, AVG( wasp_price ) as wasp_price , SUM( volume_changed ) as volume_changed , timestamp
+FROM wasp_stats 
+WHERE timestamp >= "'.date('Y-m-d H:i',time()-86400).'" 
+GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(15*60)) ORDER BY id ASC';
+		}
+		
+		if ($chart_type == 'week')
+		{
+			
+		$sql ='SELECT id, AVG( wasp_price ) as wasp_price , SUM( volume_changed ) as volume_changed , timestamp
+FROM wasp_stats 
+WHERE timestamp >= "'.date('Y-m-d H:i',time()-604800).'" 
+GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(4*60*60)) ORDER BY id ASC';
+		}
+		
+		if ($chart_type == 'month')
+		{
+			
+		$sql ='SELECT id, AVG( wasp_price ) as wasp_price , SUM( volume_changed ) as volume_changed , timestamp
+FROM wasp_stats 
+WHERE timestamp >= "'.date('Y-m-d H:i',time()-2592000).'" 
+GROUP BY DAY(timestamp) ORDER BY id ASC';
+		}
+		
+		
 		$query = $this->db->query($sql);
 		$chart_data = $query->result_array();
 		$view['chart_data'] = $chart_data;
+		
+
 		
 		// Gett MAX MIN AVG //
 		$sql ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats';

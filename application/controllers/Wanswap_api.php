@@ -232,7 +232,14 @@ class Wanswap_api extends CI_Controller {
 		$volume_changed = abs(round($wasp_lastest_amount,18)-round($wasp_amount,18));
 		
 		
-		
+		if ($exchange_rate == 1)
+		{
+			die();
+		}
+		if ($wasp_amount == $wan_amount)
+		{
+			die();
+		}
 		
 		
 		$this->db->insert('wasp_stats',array(

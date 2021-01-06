@@ -19,6 +19,9 @@
 ?>
 
 <script>
+	function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
 	function abbreviate(number, maxPlaces, forcePlaces, forceLetter) {
         number = Number(number);
         forceLetter = forceLetter || false;
@@ -116,7 +119,7 @@
                             var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
                             
-                            return label+': '+tooltipItem.yLabel;
+                            return label+': '+formatNumber(tooltipItem.yLabel);
                         }
                     }
                 },
@@ -127,6 +130,7 @@
                         display: true,
                         position: 'left',
                         id: 'y-axis-1',
+						
                          ticks: {
 							max: <?php echo $max_price_scale?>,
                         },
