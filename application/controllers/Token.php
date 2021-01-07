@@ -7,7 +7,6 @@ class Token extends CI_Controller {
 	 {
 			parent::__construct();
 			// Your own constructor code
-			
 			$this->client = new Client($this->config->item('iwan_client'));
 	 }
 	private function _getprice()
@@ -24,7 +23,7 @@ class Token extends CI_Controller {
 	
 	private function _getTokenSupply($address,$chain='ETH')
     {
-        
+        //$this->client = new Client($this->config->item('iwan_client'));
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -55,23 +54,30 @@ class Token extends CI_Controller {
 
             $this->client->send($query_string);
             $result = json_decode($this->client->receive(), true);
+			try
+			{
+				if (isset($result['result']) && $result['result']) {
 
-            if (isset($result['result']) && $result['result']) {
+					$result = $result['result'];
 
-                $result = $result['result'];
-
-                $this->cache->save($method.'_'.$address, $result, 300); // 5 mins
-            } else {
-                $result = '';
-                $this->output->delete_cache();
-            }
+					$this->cache->save($method.'_'.$address, $result, 300); // 5 mins
+				} else {
+					
+					$this->output->delete_cache();
+					return 0;
+				}
+			}
+			catch(Exception $e)
+			{
+				return 0;
+			}
         }
         return $result;
     }
 	
 	private function _getTokenBalance($address,$scAddress)
     {
-        
+        //$this->client = new Client($this->config->item('iwan_client'));
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -102,51 +108,26 @@ class Token extends CI_Controller {
 
             $this->client->send($query_string);
             $result = json_decode($this->client->receive(), true);
+			try
+			{
+				if (isset($result['result']) && $result['result']) {
 
-            if (isset($result['result']) && $result['result']) {
+					$result = $result['result'];
 
-                $result = $result['result'];
-
-                $this->cache->save($method.'_'.md5($address.$scAddress), $result, 300); // 5 min
-            } else {
-                $result = '';
-                $this->output->delete_cache();
-            }
+					$this->cache->save($method.'_'.md5($address.$scAddress), $result, 300); // 5 min
+				} else {
+					
+					$this->output->delete_cache();
+					return 0;
+				}
+			}
+			catch(Exception $e)
+			{
+				return 0;
+			}
         }
         return $result;
     }
-	
-	function wasp_text()
-	{
-		function custom_format($number)
-		{
-			$tmp = floor($number);
-			$digit = $number - $tmp;
-			$tmp = number_format($tmp);
-			return $tmp.'.'.substr(str_replace('0.','',$digit.''),0,6);
-		}
-		$price = json_decode($this->_getprice(),true);
-		$token0 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-		sleep(1);
-		
-		
-		$token1 = $this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48')/WAN_DIGIT;
-		sleep(1);
-		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
-		
-		echo 'Price & Supply<br/>-------------------<br/>';
-		echo 'Supply = '.number_format($wasp_supply).' WASP<br/>';
-		echo '1 WAN = '. number_format($token0/$token1,2).' WASP<br/>';
-		$rate = $token0/$token1;
-		$wan_reflect = $token0/$rate;
-		echo '1 WASP = '.number_format($price['WAN']['USD']/$rate,5).' USD<br/><br/>';
-		echo 'Liquidity Pool<br/>-------------------<br/>';
-		echo 'Pool Size = '. number_format($wan_reflect*$price['WAN']['USD']+$token1*$price['WAN']['USD']).' USD<br/>';
-		echo number_format($token0).' WASP | ';
-		echo number_format($token1).' WAN';
-		
-		echo '<br/>-------------------<br/>'.date('Y-m-d H:i',time()).'Z';
-	}
 	
 	
 	private function insert_db($asset_name,$asset_amount,$asset_price,$chain,$timestamp)
@@ -163,32 +144,10 @@ class Token extends CI_Controller {
 			));
 		}
 		
-	public function test_sync()
-	{
-		$this->load->database();
-		
-		$price = json_decode($this->_getprice(),true);
-		$timestamp = date('Y-m-d H:i',time());
-		
-		// wanBTC //
-		for($i=0;$i<5;$i++)
-		{
-		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
-		//$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'wan',$timestamp);
-		
-		echo $amount.'<br/>';
-		
-		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN')/10000;
-		echo $amount.'<br/>';
-		
-		$burned = $this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a')/WAN_DIGIT;
-		echo $burned.'<br/>';
-		}
-	}
+	
 	public function sync()
 	{
-		
-		
+
 		$this->load->database();
 		
 		$price = json_decode($this->_getprice(),true);
@@ -196,43 +155,62 @@ class Token extends CI_Controller {
 		
 		//=============Wanchain============//
 		// WWan //
-		$amount = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN')/WAN_DIGIT;
-		$this->insert_db('WWAN',$amount,$price['WAN']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
+		echo 'WWAN:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('WWAN',$amount/WAN_DIGIT,$price['WAN']['USD'],'wan',$timestamp);
+
 		// wanETH //
-		$amount = $this->_getTokenSupply('0xe3Ae74d1518a76715Ab4c7bEdf1AF73893CD435a','WAN')/WAN_DIGIT;
-		$this->insert_db('wanETH',$amount,$price['ETH']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0xe3Ae74d1518a76715Ab4c7bEdf1AF73893CD435a','WAN');
+		echo 'wanETH:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanETH',$amount/WAN_DIGIT,$price['ETH']['USD'],'wan',$timestamp);
+		
 		// wanBTC //
-		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
-		$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN');
+		echo 'wanBTC:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanBTC',$amount/100000000,$price['BTC']['USD'],'wan',$timestamp);
+		
 		// wanEOS //
-		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN')/10000;
-		$this->insert_db('wanEOS',$amount,$price['EOS']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN');
+		echo 'wanEOS:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanEOS',$amount/10000,$price['EOS']['USD'],'wan',$timestamp);
+		
 		// wanUSDT //
-		$amount = $this->_getTokenSupply('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN')/1000000;
-		$this->insert_db('wanUSDT',$amount,$price['USDT']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN');
+		echo 'wanUSDT:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanUSDT',$amount/1000000,$price['USDT']['USD'],'wan',$timestamp);
+		
 		// wanUSDC //
-		$amount = $this->_getTokenSupply('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN')/1000000;
-		$this->insert_db('wanUSDC',$amount,$price['USDC']['USD'],'wan',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN');
+		echo 'wanUSDC:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanUSDC',$amount/1000000,$price['USDC']['USD'],'wan',$timestamp);
+		
+		echo '<br/>=======@ETH=======<br/>';
 		//============Ethereum=============//
 		// WAN //
-		$amount = $this->_getTokenSupply('0x135B810e48e4307AB2a59ea294A6f1724781bD3C','ETH')/WAN_DIGIT;
-		$this->insert_db('WAN',$amount,$price['WAN']['USD'],'eth',$timestamp);
-		sleep(1);
-		// wanBTC //
-		$amount = $this->_getTokenSupply('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH')/100000000;
-		$this->insert_db('wanBTC',$amount,$price['BTC']['USD'],'eth',$timestamp);
-		sleep(1);
-		// wanEOS //
-		$amount = $this->_getTokenSupply('0x11167f7889ae34E2C6b15c9226D0b320C45d629D','ETH')/10000;
-		$this->insert_db('wanEOS',$amount,$price['EOS']['USD'],'eth',$timestamp);
-		sleep(1);
+		$amount = $this->_getTokenSupply('0x135B810e48e4307AB2a59ea294A6f1724781bD3C','ETH');
+		echo 'WAN:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('WAN',$amount/WAN_DIGIT,$price['WAN']['USD'],'eth',$timestamp);
 		
+		// wanBTC //
+		$amount = $this->_getTokenSupply('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH');
+		echo 'wanBTC:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanBTC',$amount/100000000,$price['BTC']['USD'],'eth',$timestamp);
+		
+		// wanEOS //
+		$amount = $this->_getTokenSupply('0x11167f7889ae34E2C6b15c9226D0b320C45d629D','ETH');
+		echo 'wanEOS:'.$amount.'<br/>';
+		if ($amount != 0)
+		$this->insert_db('wanEOS',$amount/10000,$price['EOS']['USD'],'eth',$timestamp);
+		
+		$this->client->close();
 	}
 	
 	
@@ -324,18 +302,19 @@ class Token extends CI_Controller {
 	function sync_wasp()
 	{
 		$this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
-		sleep(1);
+		
 		$this->_getTokenBalance('0x29239a9B93A78decEc6E0Dd58ddBb854B7fFB0af','0xdabd997ae5e4799be47d6e69d9431615cba28f48');
-		sleep(1);
+		
 		$this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN');
-		sleep(1);
+		
 		$this->_getTokenBalance('0x7e5Fe1E587a5C38b4a4a9BA38A35096f8ea35AAc','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
-		sleep(1);
+		
 		$this->_getTokenBalance('0x0000000000000000000000000000000000000001','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
-		sleep(1);
+		
 		$this->_getTokenBalance('0x93f98C2216B181846e1C92e7Deb06911373e1f37','0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a');
-		sleep(1);
+		
 		$this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
+		$this->client->close();
 	}
 	
 	function wasp($chart_type='day')
@@ -347,7 +326,7 @@ class Token extends CI_Controller {
 			redirect('/token/wasp', 'refresh');
 			die();
 		}
-		$this->output->cache(10);
+		$this->output->cache(15);
 		function custom_format($number)
 		{
 			$tmp = floor($number);
@@ -437,6 +416,8 @@ GROUP BY DAY(timestamp) ORDER BY id ASC';
 		$view['day_summary'] = $day_summary;
 		$view['web_title'] = '$WASP TOKEN';
         $this->load->view('wasp',$view);
+		
+		$this->client->close();
 	}
 	
 }

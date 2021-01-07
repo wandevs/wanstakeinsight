@@ -8,7 +8,6 @@ class Wanswap_api extends CI_Controller {
 	 {
 			parent::__construct();
 			// Your own constructor code
-			
 			$this->client = new Client($this->config->item('iwan_client'));
 	 }
 	
@@ -65,7 +64,7 @@ class Wanswap_api extends CI_Controller {
 	
 	private function _getTokenBalance($address,$scAddress)
     {
-       
+		//$this->client = new Client($this->config->item('iwan_client'));
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -207,6 +206,20 @@ class Wanswap_api extends CI_Controller {
 
 		return $content; // show target page
 	}
+	
+	public function test()
+	{
+		set_time_limit (360);
+		// wanBTC //
+		for($i=1;$i<=100;$i++)
+		{
+			$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
+			echo $amount;
+		
+		}
+	}
+	
+	
 	public function sync_wasp_stat()
 	{
 		$list = $this->_pair_list();
@@ -219,7 +232,11 @@ class Wanswap_api extends CI_Controller {
 		$wasp_amount = $this->_getTokenBalance($pair['pair_address'],$pair['quote_address'])/$pair['quote_decimal'];
 		$wan_amount = $this->_getTokenBalance($pair['pair_address'],$pair['base_address'])/$pair['base_decimal'];
 		if ($wasp_amount==0 || $wan_amount == 0)
-		die();
+		{
+			$this->client->close();
+			die();
+		}
+		
 		
 		$exchange_rate = $wasp_amount/$wan_amount; // to WAN
 		
@@ -234,10 +251,12 @@ class Wanswap_api extends CI_Controller {
 		
 		if ($exchange_rate == 1)
 		{
+			$this->client->close();
 			die();
 		}
 		if ($wasp_amount == $wan_amount)
 		{
+			$this->client->close();
 			die();
 		}
 		
@@ -250,6 +269,9 @@ class Wanswap_api extends CI_Controller {
 			'volume_changed'=>$volume_changed,
 			'timestamp'=>$timestamp,
 		));
+		
+		$this->client->close();
+		die();
 	}
 	
 	public function cmc()
@@ -278,6 +300,7 @@ class Wanswap_api extends CI_Controller {
 		}
 		header('Content-Type: application/json');
 		echo json_encode($api_result);
+		$this->client->close();
 	}
 	
 	

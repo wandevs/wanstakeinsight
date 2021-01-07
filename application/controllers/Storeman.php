@@ -264,11 +264,12 @@ class Storeman extends CI_Controller {
 	{
 		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
 		$this->_getStoremanGroupMember($groupId);
+		$this->client->close();
 	}
 	
 	public function index()
 	{
-		$this->output->cache(15);
+		$this->output->cache(30);
 		//echo '<pre>';
 		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
 		$groupName = 'Aries_001';
@@ -306,7 +307,7 @@ class Storeman extends CI_Controller {
 		$view['delegated_count'] = $delegated_count;
 		$view['highest_delegated'] = $highest_delegated/ WAN_DIGIT;
 		$view['avg_delegated'] = round(array_sum(array_filter($avg_delegated))/count($avg_delegated)/ WAN_DIGIT);
-		
+		$this->client->close();
         $this->load->view('storeman',$view);
 	}
 	
