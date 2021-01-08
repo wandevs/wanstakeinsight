@@ -3,13 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use WebSocket\Client;
 class Welcome extends CI_Controller {
 	
-		public $client = null;
+	public $client = null;
+	public $idx = 0;
 	 public function __construct()
 	 {
 		parent::__construct();
 		// Your own constructor code
-		
 		$this->client = new Client($this->config->item('iwan_client'));
+		$this->idx = rand(1,1000000000);
 	 }
     public function clearPageCache($pass='')
     {
@@ -31,7 +32,7 @@ class Welcome extends CI_Controller {
     private function _getLeaderGroupByEpoch($epoch_id)
     {
 
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -54,7 +55,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -62,7 +63,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -117,6 +118,7 @@ class Welcome extends CI_Controller {
 
     private function _getEpochIncentivePayDetail($epoch_dec=1)
     {
+		$this->idx++;
         $epochinfo = $this->_getCurrentEpochInfo();
         if ($epochinfo=='')
         {
@@ -148,7 +150,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -156,7 +158,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -184,7 +186,7 @@ class Welcome extends CI_Controller {
     private function _getCurrentEpochInfo()
     {
 
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -199,7 +201,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -207,7 +209,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -234,12 +236,13 @@ class Welcome extends CI_Controller {
 
     private function _getLeaderGroup($epoch_dec=0)
     {
+		
         $epochinfo = $this->_getCurrentEpochInfo();
         if ($epochinfo=='')
         {
             return '';
         }
-
+		$this->idx++;
         $epochinfo = unserialize($epochinfo);
         
         $secret = $this->config->item('iwan_secret');
@@ -260,7 +263,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -268,7 +271,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -297,7 +300,7 @@ class Welcome extends CI_Controller {
 
 	private function _getCurrentStakerInfo()
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -315,7 +318,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -323,7 +326,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -349,7 +352,7 @@ class Welcome extends CI_Controller {
 
     private function _getStakerInfo($block_height)
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -367,7 +370,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret,true));
             $params_array["signature"] = $signature;
@@ -375,7 +378,7 @@ class Welcome extends CI_Controller {
                 'jsonrpc'=>'2.0',
                 'method'=>$method,
                 'params'=>$params_array,
-                'id'=>0,
+                'id'=>$this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -401,7 +404,7 @@ class Welcome extends CI_Controller {
 
     private function _getBlockIncentive($epochId)
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
 
@@ -596,7 +599,7 @@ class Welcome extends CI_Controller {
                     }
 
 
-                    
+                    $this->idx++;
                     $secret = $this->config->item('iwan_secret');
                     $timestamp = round(microtime(true) * 1000);
 
@@ -616,7 +619,7 @@ class Welcome extends CI_Controller {
                             'jsonrpc' => '2.0',
                             'method' => $method,
                             'params' => $params_array,
-                            'id' => 0,
+                            'id' => $this->idx,
                         );
                         $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
                         $params_array["signature"] = $signature;
@@ -624,7 +627,7 @@ class Welcome extends CI_Controller {
                             'jsonrpc' => '2.0',
                             'method' => $method,
                             'params' => $params_array,
-                            'id' => 0,
+                            'id' => $this->idx,
                         );
 
                         $query_string = json_encode($query_array);
@@ -724,13 +727,10 @@ class Welcome extends CI_Controller {
                 //echo '<pre>';
                 //print_r($delegating_reward);
 
-
                 foreach ($delegating as $address => $delegate_epoch) {
                     foreach ($delegate_epoch as $epoch => $delegated) {
                         // Calculate Ratio //
-
                         $delegate_ratio[$address][$epoch] = $delegating_reward[$address][$epoch] / $delegated * 1000000;
-
                     }
                 }
 

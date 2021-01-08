@@ -4,16 +4,18 @@ use WebSocket\Client;
 class Wanswap_api extends CI_Controller {
 	
 	 public $client = null;
+	 public $idx = 0;
 	 public function __construct()
 	 {
 			parent::__construct();
 			// Your own constructor code
 			$this->client = new Client($this->config->item('iwan_client'));
+			$this->idx = rand(1,1000000000);
 	 }
 	
 	private function _getTokenSupply($address,$chain='ETH')
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -29,7 +31,7 @@ class Wanswap_api extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -37,7 +39,7 @@ class Wanswap_api extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -65,6 +67,7 @@ class Wanswap_api extends CI_Controller {
 	private function _getTokenBalance($address,$scAddress)
     {
 		//$this->client = new Client($this->config->item('iwan_client'));
+		$idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -80,7 +83,7 @@ class Wanswap_api extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -88,7 +91,7 @@ class Wanswap_api extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -112,6 +115,11 @@ class Wanswap_api extends CI_Controller {
         }
         return $result;
     }
+	
+	
+	
+	
+	
 	private function _pair_list()
 	{
 		// WASP-WAN //
@@ -213,8 +221,15 @@ class Wanswap_api extends CI_Controller {
 		// wanBTC //
 		for($i=1;$i<=100;$i++)
 		{
+			// BTC //
 			$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN')/100000000;
-			echo $amount;
+			echo $amount.'<br>';
+			// EOS //
+			$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN')/10000;
+			echo $amount.'<br>';
+			// BTC @ ETH //
+			$amount = $this->_getTokenSupply('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH')/100000000;
+			echo $amount.'<br>';
 		
 		}
 	}
@@ -231,7 +246,7 @@ class Wanswap_api extends CI_Controller {
 		
 		$wasp_amount = $this->_getTokenBalance($pair['pair_address'],$pair['quote_address'])/$pair['quote_decimal'];
 		$wan_amount = $this->_getTokenBalance($pair['pair_address'],$pair['base_address'])/$pair['base_decimal'];
-		if ($wasp_amount==0 || $wan_amount == 0)
+		if (floor($wasp_amount)<=0 || floor($wan_amount) <= 0)
 		{
 			$this->client->close();
 			die();
@@ -282,9 +297,11 @@ class Wanswap_api extends CI_Controller {
 		$api_result = array();
 		foreach($list as $pair)
 		{
+			
+			
 			$token0 = $this->_getTokenBalance($pair['pair_address'],$pair['quote_address'])/$pair['quote_decimal'];
 			$token1 = $this->_getTokenBalance($pair['pair_address'],$pair['base_address'])/$pair['base_decimal'];
-			if ($token0 == 0 || $token1 == 0) continue;
+			if (floor($token0) <= 0 || floor($token1) <= 0) continue;
 			$exchange_rate = $token0/$token1;
 			$api_result[$pair['pair_address']] = array(
 				'base_id'=>$pair['base_address'],

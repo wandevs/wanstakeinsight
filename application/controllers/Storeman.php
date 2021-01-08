@@ -4,18 +4,20 @@ use WebSocket\Client;
 class Storeman extends CI_Controller {
 	
 	public $client = null;
+	public $idx = 0;
 	 public function __construct()
 	 {
 			parent::__construct();
 			// Your own constructor code
 			
 			$this->client = new Client($this->config->item('iwan_client'));
+			$this->idx = rand(1,1000000000);
 	 }
 	
 	
 	private function _getStoremanGroupList()
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -29,7 +31,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -37,7 +39,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -60,7 +62,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanGroupMember($groupId)
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -75,7 +77,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -83,7 +85,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -106,7 +108,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanGroupInfo($groupId)
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -122,7 +124,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -130,7 +132,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -153,7 +155,7 @@ class Storeman extends CI_Controller {
 	
 	private function _getStoremanStakeTotalIncentive()
     {
-        
+        $this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -170,7 +172,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -178,7 +180,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -219,7 +221,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -227,7 +229,7 @@ class Storeman extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -262,7 +264,7 @@ class Storeman extends CI_Controller {
 	
 	public function sync_storeman()
 	{
-		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
+		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303032';
 		$this->_getStoremanGroupMember($groupId);
 		$this->client->close();
 	}
@@ -271,8 +273,8 @@ class Storeman extends CI_Controller {
 	{
 		$this->output->cache(30);
 		//echo '<pre>';
-		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303031';
-		$groupName = 'Aries_001';
+		$groupId = '0x000000000000000000000000000000000000000000000041726965735f303032';
+		$groupName = 'Aries_002';
 		$storemen = $this->_getStoremanGroupMember($groupId);
 		$total_selfstaked = 0;
 		$total_deposit = 0;

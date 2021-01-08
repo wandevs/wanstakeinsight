@@ -3,11 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use WebSocket\Client;
 class Token extends CI_Controller {
 	public $client = null;
+	public $idx = 0;
 	 public function __construct()
 	 {
 			parent::__construct();
 			// Your own constructor code
 			$this->client = new Client($this->config->item('iwan_client'));
+			$this->idx = rand(1,1000000000);
 	 }
 	private function _getprice()
 	{
@@ -24,6 +26,7 @@ class Token extends CI_Controller {
 	private function _getTokenSupply($address,$chain='ETH')
     {
         //$this->client = new Client($this->config->item('iwan_client'));
+		$this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -39,7 +42,7 @@ class Token extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -47,7 +50,7 @@ class Token extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -77,6 +80,7 @@ class Token extends CI_Controller {
 	
 	private function _getTokenBalance($address,$scAddress)
     {
+		$this->idx++;
         //$this->client = new Client($this->config->item('iwan_client'));
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
@@ -93,7 +97,7 @@ class Token extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
             $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
             $params_array["signature"] = $signature;
@@ -101,7 +105,7 @@ class Token extends CI_Controller {
                 'jsonrpc' => '2.0',
                 'method' => $method,
                 'params' => $params_array,
-                'id' => 0,
+                'id' => $this->idx,
             );
 
             $query_string = json_encode($query_array);
@@ -382,6 +386,8 @@ class Token extends CI_Controller {
 FROM wasp_stats 
 WHERE timestamp >= "'.date('Y-m-d H:i',time()-86400).'" 
 GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(15*60)) ORDER BY id ASC';
+
+$sql_summary ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats WHERE timestamp >= "'.date('Y-m-d H:i',time()-86400).'"';
 		}
 		
 		if ($chart_type == 'week')
@@ -391,6 +397,8 @@ GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(15*60)) ORDER BY id ASC';
 FROM wasp_stats 
 WHERE timestamp >= "'.date('Y-m-d H:i',time()-604800).'" 
 GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(4*60*60)) ORDER BY id ASC';
+
+$sql_summary ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats WHERE timestamp >= "'.date('Y-m-d H:i',time()-604800).'" ';
 		}
 		
 		if ($chart_type == 'month')
@@ -400,6 +408,8 @@ GROUP BY ROUND(UNIX_TIMESTAMP(timestamp)/(4*60*60)) ORDER BY id ASC';
 FROM wasp_stats 
 WHERE timestamp >= "'.date('Y-m-d H:i',time()-2592000).'" 
 GROUP BY DAY(timestamp) ORDER BY id ASC';
+
+$sql_summary ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats WHERE timestamp >= "'.date('Y-m-d H:i',time()-2592000).'" ';
 		}
 		
 		
@@ -410,8 +420,8 @@ GROUP BY DAY(timestamp) ORDER BY id ASC';
 
 		
 		// Gett MAX MIN AVG //
-		$sql ='SELECT MAX(wasp_price) as max_price, MIN(wasp_price) as min_price, AVG(wasp_price) as avg_price, SUM(volume_changed) as sum_volume FROM wasp_stats';
-		$query = $this->db->query($sql);
+		
+		$query = $this->db->query($sql_summary);
 		$day_summary = $query->row_array();
 		$view['day_summary'] = $day_summary;
 		$view['web_title'] = '$WASP TOKEN';
