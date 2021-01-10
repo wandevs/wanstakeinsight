@@ -64,7 +64,29 @@
 					<div class="card card-stats">
 							<div class="card-body " style="padding-bottom:15px;">
 							<div class="numbers text-center">
-								24 hours $WASP Price
+							<div id="chart-tools" style="display:flex;flex-direction:row;justify-content:space-between;align-items:center;width:100%">
+								<?php
+								$chart_title = '24 hrs';
+								if ($this->uri->segment(3) == 'week')
+								{
+									$chart_title = '7 days';
+								}
+								elseif($this->uri->segment(3) == 'month')
+								{
+									$chart_title = '30 days';
+								}
+								?>
+								
+								<div><b><?php echo $chart_title?></b> Chart & Info</div>
+
+									<div class="btn-group" style="font-size:0.5em;color:white;border-radius:20px;" role="group">
+									  <a href="./token/wasp" class="btn <?php echo $this->uri->segment(3) == ''?'active':''?>">24 hrs</a>
+									  <a href="./token/wasp/week" class="btn <?php echo $this->uri->segment(3) == 'week'?'active':''?>">7 days</a>
+									  <a href="./token/wasp/month" class="btn <?php echo $this->uri->segment(3) == 'month'?'active':''?>">30 days</a>
+									</div>
+								
+								</div>
+								
 								<div style="flex-wrap:wrap;display:flex;align-items:center;justify-content:space-around;font-size:15px;padding-top:15px;padding-bottom:15px;">
 								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Highest<br/><b><?php echo round($day_summary['max_price'],4)?>$</b></div>
 								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Lowest<br/><b><?php echo round($day_summary['min_price'],4)?>$</b></div>
@@ -181,6 +203,23 @@
 	.pool
 	{
 		background-size: 300px !important;
+	}
+	
+}
+#chart-tools .btn-group a:first-child
+	{
+		border-radius:15px 0 0 15px;
+	}
+	#chart-tools .btn-group a:last-child
+	{
+		border-radius:0 15px 15px 0;
+	}
+@media only screen and (max-width: 767px) {
+	
+	#chart-tools
+	{
+		flex-direction:column !important;
+
 	}
 }
 </style>

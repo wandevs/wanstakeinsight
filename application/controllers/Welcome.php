@@ -12,17 +12,32 @@ class Welcome extends CI_Controller {
 		$this->client = new Client($this->config->item('iwan_client'));
 		$this->idx = rand(1,1000000000);
 	 }
-    public function clearPageCache($pass='')
+    public function clearPageCache()
     {
-        if ($pass=='fennecisafox') // Change Password Here . . .
+		
+		$clearpage = $this->input->get('page');
+		
+		$pages = array(
+			'selected-validators', 'reward' , 'chart' , 'storeman' , 'token' , 'taken/wasp' , 'address'
+		);
+        if (md5($this->input->get('pass'))=='5f6f28173114b81720a6a3eaa6671ac4') // Change Password Here . . .
         {
-        $this->output->delete_cache('/');
-        $this->output->delete_cache('/selected-validators');
-        $this->output->delete_cache('/reward');
-        $this->output->delete_cache('/chart');
-            $this->load->driver('cache', array('adapter' => 'file'));
-            $this->cache->delete('stake_guide');
-        echo 'Done';
+			if ($clearpage == 'all')
+			{
+				foreach($pages as $page)
+				{
+					$this->output->delete_cache('/'.$page);
+					echo 'CLEAR: '.$page.'<br/>';
+				}
+				$this->load->driver('cache', array('adapter' => 'file'));
+				$this->cache->delete('stake_guide');
+			}
+			else{
+				$this->output->delete_cache('/'.$clearpage);
+				echo 'CLEAR: '.$clearpage.'<br/>';
+			}
+			
+         
         }
         else{
             show_404();
@@ -1349,7 +1364,7 @@ class Welcome extends CI_Controller {
             }
 
             // About Reward //
-            
+            $this->idx++;
             $secret = $this->config->item('iwan_secret');
             $timestamp = round(microtime(true) * 1000);
             $this->load->driver('cache', array('adapter' => 'file'));
@@ -1667,6 +1682,8 @@ class Welcome extends CI_Controller {
             echo '<br/>';
         }
         echo '-------------------------------------------<br/>';
+		$this->client = new Client($this->config->item('iwan_client'));
+		$this->idx = rand(1,1000000000);
         $pay_reward = $this->_getEpochIncentivePayDetail();
 	
         $pay_reward = (unserialize($pay_reward));

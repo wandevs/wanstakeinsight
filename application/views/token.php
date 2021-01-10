@@ -155,7 +155,7 @@
 									
 									<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_24hrs_amount'])
+										if ($stat['asset_amount'] != $stat['last_24hrs_amount'] && $stat['last_24hrs_amount'] !=0)
 										{
 											if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
 											{
@@ -176,7 +176,7 @@
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_7days_amount'])
+										if ($stat['asset_amount'] != $stat['last_7days_amount'] && $stat['last_7days_amount'] !=0)
 										{
 											if ($stat['asset_amount'] >= $stat['last_7days_amount'])
 											{
@@ -197,7 +197,7 @@
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_30days_amount'])
+										if ($stat['asset_amount'] != $stat['last_30days_amount'] && $stat['last_30days_amount'] !=0)
 										{
 											if ($stat['asset_amount'] >= $stat['last_30days_amount'])
 											{
@@ -317,7 +317,7 @@
 									
 									<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_24hrs_amount'])
+										if ($stat['asset_amount'] != $stat['last_24hrs_amount'] && $stat['last_24hrs_amount'])
 										{
 											if ($stat['asset_amount'] >= $stat['last_24hrs_amount'])
 											{
@@ -338,7 +338,7 @@
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_7days_amount'])
+										if ($stat['asset_amount'] != $stat['last_7days_amount'] && $stat['last_7days_amount'])
 										{
 											if ($stat['asset_amount'] >= $stat['last_7days_amount'])
 											{
@@ -359,7 +359,7 @@
 										
 										<td class="text-center">
 										<?php  
-										if ($stat['asset_amount'] != $stat['last_30days_amount'])
+										if ($stat['asset_amount'] != $stat['last_30days_amount'] && $stat['last_30days_amount'])
 										{
 											if ($stat['asset_amount'] >= $stat['last_30days_amount'])
 											{

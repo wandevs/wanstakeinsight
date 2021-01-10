@@ -12,6 +12,8 @@ class Wanswap_api extends CI_Controller {
 			$this->client = new Client($this->config->item('iwan_client'));
 			$this->idx = rand(1,1000000000);
 	 }
+	 
+	 
 	
 	private function _getTokenSupply($address,$chain='ETH')
     {
@@ -53,11 +55,15 @@ class Wanswap_api extends CI_Controller {
 					$result = $result['result'];
 					$this->cache->save('API_'.$method.'_'.$address, $result, 45); // 60 SECS
 				} else {
+					$this->client = new Client($this->config->item('iwan_client'));
+					$this->idx = rand(1,1000000000);
 					return 0;
 				}
 			}
 			catch(Exception $e)
 			{
+				$this->client = new Client($this->config->item('iwan_client'));
+				$this->idx = rand(1,1000000000);
 				return 0;
 			}
         }
@@ -67,7 +73,7 @@ class Wanswap_api extends CI_Controller {
 	private function _getTokenBalance($address,$scAddress)
     {
 		//$this->client = new Client($this->config->item('iwan_client'));
-		$idx++;
+		$this->idx++;
         $secret = $this->config->item('iwan_secret');
         $timestamp = round(microtime(true) * 1000);
         $this->load->driver('cache', array('adapter' => 'file'));
@@ -97,6 +103,7 @@ class Wanswap_api extends CI_Controller {
             $query_string = json_encode($query_array);
 
             $this->client->send($query_string);
+			//echo $this->client->receive();
             $result = json_decode($this->client->receive(), true);
 
 			try
@@ -105,11 +112,15 @@ class Wanswap_api extends CI_Controller {
 					$result = $result['result'];
 					$this->cache->save('API_'.$method.'_'.md5($address.$scAddress), $result, 45); // 60 SECS
 				} else {
+					$this->client = new Client($this->config->item('iwan_client'));
+					$this->idx = rand(1,1000000000);
 					return 0;
 				}
 			}
 			catch(Exception $e)
 			{
+				$this->client = new Client($this->config->item('iwan_client'));
+				$this->idx = rand(1,1000000000);
 				return 0;
 			}
         }
@@ -288,13 +299,21 @@ class Wanswap_api extends CI_Controller {
 		$this->client->close();
 		die();
 	}
-	
+
+	public function wasp_supply()
+	{
+		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
+		header('Content-Type: application/json');
+		echo json_encode(array('wasp_supply'=>$wasp_supply));
+	}
 	public function cmc()
 	{
 		error_reporting(0);
 		$list = $this->_pair_list();
 		
 		$api_result = array();
+		$this->load->driver('cache', array('adapter' => 'file'));
+		$count_pair = count($list);
 		foreach($list as $pair)
 		{
 			
@@ -302,19 +321,49 @@ class Wanswap_api extends CI_Controller {
 			$token0 = $this->_getTokenBalance($pair['pair_address'],$pair['quote_address'])/$pair['quote_decimal'];
 			$token1 = $this->_getTokenBalance($pair['pair_address'],$pair['base_address'])/$pair['base_decimal'];
 			if (floor($token0) <= 0 || floor($token1) <= 0) continue;
+			if (floor($token0) >= 999999999999 || floor($token1) >= 999999999999)  continue;
+			
+			
+			
 			$exchange_rate = $token0/$token1;
-			$api_result[$pair['pair_address']] = array(
-				'base_id'=>$pair['base_address'],
-				'base_name'=>$pair['base_name'],
-				'base_symbol'=>$pair['base_symbol'],
-				'quote_id'=>$pair['quote_address'],
-				'quote_name'=>$pair['quote_name'],
-				'quote_symbol'=>$pair['quote_symbol'],
-				'last_price'=>$exchange_rate,
-				'base_volume'=>$token1,
-				'quote_volume'=>$token0,
-			);
+			
+			
+			
+            if (!$previous_stat = $this->cache->get('wanswap_pair_'.$pair['pair_address']))
+			{
+				$this->cache->save('wanswap_pair_'.$pair['pair_address'], $exchange_rate, 86400); // 1 days
+			}
+			else
+			{
+				$percentChange = (1 - $previous_stat / $exchange_rate) * 100;
+				
+				
+				if (floor(abs($percentChange)) < 20)
+				{
+				
+				$api_result[$pair['pair_address']] = array(
+					'base_id'=>$pair['base_address'],
+					'base_name'=>$pair['base_name'],
+					'base_symbol'=>$pair['base_symbol'],
+					'quote_id'=>$pair['quote_address'],
+					'quote_name'=>$pair['quote_name'],
+					'quote_symbol'=>$pair['quote_symbol'],
+					'last_price'=>$exchange_rate,
+					'base_volume'=>$token1,
+					'quote_volume'=>$token0,
+				);
+				
+				$api_result[$pair['pair_address']]['percent_diff'] = abs($percentChange);
+				$this->cache->save('wanswap_pair_'.$pair['pair_address'], $exchange_rate, 86400); // 1 days
+				}
+			}
 		}
+		
+		if ($count_pair != count($api_result))
+		{
+			die();
+		}
+		
 		header('Content-Type: application/json');
 		echo json_encode($api_result);
 		$this->client->close();

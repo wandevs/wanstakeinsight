@@ -54,6 +54,8 @@ class Token extends CI_Controller {
             );
 
             $query_string = json_encode($query_array);
+			
+			
 
             $this->client->send($query_string);
             $result = json_decode($this->client->receive(), true);
@@ -62,20 +64,81 @@ class Token extends CI_Controller {
 				if (isset($result['result']) && $result['result']) {
 
 					$result = $result['result'];
-
 					$this->cache->save($method.'_'.$address, $result, 300); // 5 mins
 				} else {
 					
 					$this->output->delete_cache();
+					$this->client = new Client($this->config->item('iwan_client'));
+					$this->idx = rand(1,1000000000);
 					return 0;
 				}
 			}
 			catch(Exception $e)
 			{
+				$this->client = new Client($this->config->item('iwan_client'));
+				$this->idx = rand(1,1000000000);
 				return 0;
 			}
         }
         return $result;
+    }
+	
+	private function _getTokenSupply2($address,$chain='ETH')
+    {
+        //$this->client = new Client($this->config->item('iwan_client'));
+		$this->idx++;
+        $secret = $this->config->item('iwan_secret');
+        $timestamp = round(microtime(true) * 1000);
+        
+        $method = 'getTokenSupply';
+        
+            $params_array = array(
+				'chainType' => $chain,
+				'tokenScAddr' => $address,
+                'timestamp' => $this->config->item('iwan_timestamp')
+            );
+            $signature_message = array(
+                'jsonrpc' => '2.0',
+                'method' => $method,
+                'params' => $params_array,
+                'id' => $this->idx,
+            );
+            $signature = base64_encode(hash_hmac('sha256', json_encode($signature_message), $secret, true));
+            $params_array["signature"] = $signature;
+            $query_array = array(
+                'jsonrpc' => '2.0',
+                'method' => $method,
+                'params' => $params_array,
+                'id' => $this->idx,
+            );
+
+            $query_string = json_encode($query_array);
+			
+		//echo $query_string;
+		$this->client->send($query_string);
+		$raw = $this->client->receive();
+		echo $raw.'<br/>';
+        $result = json_decode($raw, true);
+		try
+			{
+				if (isset($result['result']) && $result['result']) {
+
+					$result = $result['result'];
+
+				} else {
+					
+					$this->client = new Client($this->config->item('iwan_client'));
+					$this->idx = rand(1,1000000000);
+					return 0;
+				}
+			}
+			catch(Exception $e)
+			{
+				$this->client = new Client($this->config->item('iwan_client'));
+				$this->idx = rand(1,1000000000);
+				return 0;
+			}
+		return $result;
     }
 	
 	private function _getTokenBalance($address,$scAddress)
@@ -120,13 +183,16 @@ class Token extends CI_Controller {
 
 					$this->cache->save($method.'_'.md5($address.$scAddress), $result, 300); // 5 min
 				} else {
-					
+					$this->client = new Client($this->config->item('iwan_client'));
+					$this->idx = rand(1,1000000000);
 					$this->output->delete_cache();
 					return 0;
 				}
 			}
 			catch(Exception $e)
 			{
+				$this->client = new Client($this->config->item('iwan_client'));
+				$this->idx = rand(1,1000000000);
 				return 0;
 			}
         }
@@ -161,37 +227,51 @@ class Token extends CI_Controller {
 		// WWan //
 		$amount = $this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
 		echo 'WWAN:'.$amount.'<br/>';
-		if ($amount != 0)
+		
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','WWAN')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/WAN_DIGIT) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('WWAN',$amount/WAN_DIGIT,$price['WAN']['USD'],'wan',$timestamp);
-
+		
+		
 		// wanETH //
 		$amount = $this->_getTokenSupply('0xe3Ae74d1518a76715Ab4c7bEdf1AF73893CD435a','WAN');
 		echo 'wanETH:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanETH')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/WAN_DIGIT) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanETH',$amount/WAN_DIGIT,$price['ETH']['USD'],'wan',$timestamp);
 		
 		// wanBTC //
 		$amount = $this->_getTokenSupply('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN');
 		echo 'wanBTC:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanBTC')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/100000000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanBTC',$amount/100000000,$price['BTC']['USD'],'wan',$timestamp);
 		
 		// wanEOS //
 		$amount = $this->_getTokenSupply('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN');
 		echo 'wanEOS:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanEOS')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/10000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanEOS',$amount/10000,$price['EOS']['USD'],'wan',$timestamp);
 		
 		// wanUSDT //
 		$amount = $this->_getTokenSupply('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN');
 		echo 'wanUSDT:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanUSDT')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/1000000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanUSDT',$amount/1000000,$price['USDT']['USD'],'wan',$timestamp);
 		
 		// wanUSDC //
 		$amount = $this->_getTokenSupply('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN');
 		echo 'wanUSDC:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanUSDC')->where('chain','wan')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/1000000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanUSDC',$amount/1000000,$price['USDC']['USD'],'wan',$timestamp);
 		
 		echo '<br/>=======@ETH=======<br/>';
@@ -199,20 +279,82 @@ class Token extends CI_Controller {
 		// WAN //
 		$amount = $this->_getTokenSupply('0x135B810e48e4307AB2a59ea294A6f1724781bD3C','ETH');
 		echo 'WAN:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','WAN')->where('chain','eth')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/WAN_DIGIT) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('WAN',$amount/WAN_DIGIT,$price['WAN']['USD'],'eth',$timestamp);
 		
 		// wanBTC //
 		$amount = $this->_getTokenSupply('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH');
 		echo 'wanBTC:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanBTC')->where('chain','eth')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/100000000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanBTC',$amount/100000000,$price['BTC']['USD'],'eth',$timestamp);
 		
 		// wanEOS //
 		$amount = $this->_getTokenSupply('0x11167f7889ae34E2C6b15c9226D0b320C45d629D','ETH');
 		echo 'wanEOS:'.$amount.'<br/>';
-		if ($amount != 0)
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name','wanEOS')->where('chain','eth')->order_by('id','desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount/10000) ) * 100;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
 		$this->insert_db('wanEOS',$amount/10000,$price['EOS']['USD'],'eth',$timestamp);
+		
+		$this->client->close();
+	}
+	
+	
+	public function sync_test()
+	{
+
+		$this->load->database();
+		
+		$price = json_decode($this->_getprice(),true);
+		$timestamp = date('Y-m-d H:i',time());
+		
+		//=============Wanchain============//
+		// WWan //
+		$amount = $this->_getTokenSupply2('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48','WAN');
+		echo 'WWAN:'.($amount/WAN_DIGIT).'<br/><br/>';
+		
+		// wanETH //
+		$amount = $this->_getTokenSupply2('0xe3Ae74d1518a76715Ab4c7bEdf1AF73893CD435a','WAN');
+		echo 'wanETH:'.($amount/WAN_DIGIT).'<br/><br/>';
+		
+		
+		// wanBTC //
+		$amount = $this->_getTokenSupply2('0xD15E200060Fc17ef90546ad93c1C61BfeFDC89C7','WAN');
+		echo 'wanBTC:'.($amount/100000000).'<br/><br/>';
+		
+		// wanEOS //
+		$amount = $this->_getTokenSupply2('0x81862B7622ceD0deFb652aDDD4E0C110205b0040','WAN');
+		echo 'wanEOS:'.($amount/10000).'<br/><br/>';
+		
+		
+		// wanUSDT //
+		$amount = $this->_getTokenSupply2('0x11E77e27aF5539872EFeD10ABAa0B408CFD9Fbbd','WAN');
+		echo 'wanUSDT:'.($amount/1000000).'<br/><br/>';
+		
+		
+		// wanUSDC //
+		$amount = $this->_getTokenSupply2('0x52a9cea01C4cbdD669883E41758b8Eb8E8e2b34B','WAN');
+		echo 'wanUSDC:'.($amount/1000000).'<br/><br/>';
+		
+		
+		echo '<br/>=======@ETH=======<br/>';
+		//============Ethereum=============//
+		// WAN //
+		$amount = $this->_getTokenSupply2('0x135B810e48e4307AB2a59ea294A6f1724781bD3C','ETH');
+		echo 'WAN:'.($amount/WAN_DIGIT).'<br/><br/>';
+	
+		
+		// wanBTC //
+		$amount = $this->_getTokenSupply2('0x058a55925627980dbb6d6d39f8dad5de5be16764','ETH');
+		echo 'wanBTC:'.($amount/100000000).'<br/><br/>';
+	
+		// wanEOS //
+		$amount = $this->_getTokenSupply2('0x11167f7889ae34E2C6b15c9226D0b320C45d629D','ETH');
+		echo 'wanEOS:'.($amount/10000).'<br/><br/>';
 		
 		$this->client->close();
 	}
