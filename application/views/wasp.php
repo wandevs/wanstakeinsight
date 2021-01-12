@@ -78,11 +78,22 @@
 								?>
 								
 								<div><b><?php echo $chart_title?></b> Chart & Info</div>
-
-									<div class="btn-group" style="font-size:0.5em;color:white;border-radius:20px;" role="group">
-									  <a href="./token/wasp" class="btn <?php echo $this->uri->segment(3) == ''?'active':''?>">24 hrs</a>
-									  <a href="./token/wasp/week" class="btn <?php echo $this->uri->segment(3) == 'week'?'active':''?>">7 days</a>
-									  <a href="./token/wasp/month" class="btn <?php echo $this->uri->segment(3) == 'month'?'active':''?>">30 days</a>
+									
+									<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content: center;">
+										<div class="btn-group" style="font-size:0.5em;color:white;border-radius:20px;" role="group">
+										  <a href="./token/wasp" class="btn <?php echo $this->uri->segment(3) == ''?'active':''?>">24 hrs</a>
+										  <a href="./token/wasp/week" class="btn <?php echo $this->uri->segment(3) == 'week'?'active':''?>">7 days</a>
+										  <a href="./token/wasp/month" class="btn <?php echo $this->uri->segment(3) == 'month'?'active':''?>">30 days</a>
+										</div>
+										
+										<a style="font-size:0.5em;color:white;border-radius:20px;display:flex;    flex-direction: column;
+    justify-content: center;
+    height: 38px;
+    padding-top: 0;
+    padding-bottom: 0;
+    align-items: center;
+    font-size: 12px;    line-height: 12px;" href="https://www.stelareum.io/en/exchange/wanswap.html" class="btn" target="_blank">ADVANCED STATS<div style="font-size:9px">by Stelareum</div></a>
+									
 									</div>
 								
 								</div>

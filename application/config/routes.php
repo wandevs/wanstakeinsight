@@ -52,13 +52,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-
+$route['clearcache'] = 'welcome/clearPageCache';
 $route['selected-validators'] = 'welcome/selected_validators';
 $route['epoch-summary-text'] = 'welcome/epoch_summary';
 $route['reward'] = 'welcome/reward';
 $route['chart'] = 'welcome/chart';
 $route['stake-guide'] = 'welcome/stake_guide';
-
+$route['wan-token-stats'] = 'welcome/lunarcrush';
 
 $route['api/(:any)'] = 'welcome/api/$1';
 $route['api/(:any)/(:any)'] = 'welcome/api/$1/$2';

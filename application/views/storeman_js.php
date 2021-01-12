@@ -1,6 +1,6 @@
 <script>
 
-var countDownDate = new Date("Jan 9, 2021 00:04:00").getTime();
+var countDownDate = new Date("Feb 9, 2021 00:04:00").getTime();
 
 var x = setInterval(function() {
 
