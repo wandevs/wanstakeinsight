@@ -9,7 +9,7 @@ foreach ($wasp_stat as $row) {
     $tmp = strtotime($row['timestamp']);
     $timestamp[] = "'" . date('M j H:i', $tmp) . "'";
     $wasp_price[] = round($row['wasp_price'], 4);
-    $wasp_wan[] = round($row['exchange_rate'], 2);
+    $wasp_wan[] = round(1/$row['exchange_rate'], 4);
     $volume[] = round($row['volume_changed'], 2);
 }
 
@@ -162,7 +162,9 @@ foreach ($wasp_stat as $row) {
                                 labelString: 'WASP/WAN'
                             },
 
-                         
+                            gridLines: {
+                                drawOnChartArea: false,
+                            },
                             
                         },
 
@@ -176,6 +178,10 @@ foreach ($wasp_stat as $row) {
                                     return abbreviate(value, 2, 1) + ' WASP';
                                 },
                                
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Volume (WASP)'
                             },
                             gridLines: {
                                 drawOnChartArea: false,
