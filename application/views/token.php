@@ -296,8 +296,8 @@
 								
                                     <td style="text-align: center; width:60px;">
                                         <?php
-
-                                            echo '<img src="'.$asset_icons[$stat['asset_name']].'" style="width:60px;height:auto"/><div style="width:60px;"></div>';
+											$icon_name = $stat['asset_name'].'@ETHEREUM';
+                                            echo '<img src="'.$asset_icons[$icon_name].'" style="width:60px;height:auto"/><div style="width:60px;"></div>';
                                         ?>
                                     </td>
                                     <td>

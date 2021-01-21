@@ -103,7 +103,7 @@ foreach ($wasp_stat as $row) {
 
             , {
                 type: 'bar',
-                label: 'Volume (WASP)',
+                label: 'Liquidity (WASP)',
                 borderColor: "#f4f3ef",
                 backgroundColor: "#f4f3ef",
                 borderWidth: 2,
@@ -181,7 +181,7 @@ foreach ($wasp_stat as $row) {
                             },
                             scaleLabel: {
                                 display: true,
-                                labelString: 'Volume (WASP)'
+                                labelString: 'Liquidity (WASP)'
                             },
                             gridLines: {
                                 drawOnChartArea: false,

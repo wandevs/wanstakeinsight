@@ -210,6 +210,61 @@ class Wanswap_api extends CI_Controller {
 			'quote_address'=>'0xc6f4465a6a521124c8e3096b62575c157999d361',
 			'quote_decimal'=>WAN_DIGIT,
 		);
+		
+		// wanBTC-wanETH //
+		$list[6] = array(
+			'pair_address'=>'0x8663aa051be78cc78a54fe111eb308450fa17f03',
+			'base_name'=>'Wrapped ETH@Wanchain',
+			'base_symbol'=>'wanETH',
+			'base_address'=>'0xe3ae74d1518a76715ab4c7bedf1af73893cd435a',
+			'base_decimal'=>WAN_DIGIT,
+			'quote_name'=>'Wrapped BTC@Wanchain',
+			'quote_symbol'=>'wanBTC',
+			'quote_address'=>'0xd15e200060fc17ef90546ad93c1c61bfefdc89c7',
+			'quote_decimal'=>100000000,
+		);
+		
+		// wanUSDT-wanUSDC //
+		$list[7] = array(
+			'pair_address'=>'0x22d41262d4587ab2ac32d67cfeef7449d566920d',
+			'base_name'=>'Wrapped USD Coin@Wanchain',
+			'base_symbol'=>'wanUSDC',
+			'base_address'=>'0x52a9cea01c4cbdd669883e41758b8eb8e8e2b34b',
+			'base_decimal'=>1000000,
+			'quote_name'=>'Wrapped Tether USD@Wanchain',
+			'quote_symbol'=>'wanUSDT',
+			'quote_address'=>'0x11e77e27af5539872efed10abaa0b408cfd9fbbd',
+			'quote_decimal'=>1000000,
+		);
+		
+		// wanLINK-WASP //
+		$list[8] = array(
+			'pair_address'=>'0x517fdb64a96addff784773fea9d222fa1bd0c342',
+			'base_name'=>'WASP',
+			'base_symbol'=>'WASP',
+			'base_address'=>'0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a',
+			'base_decimal'=>WAN_DIGIT,
+			'quote_name'=>'Wrapped Chainlink@Wanchain',
+			'quote_symbol'=>'wanLINK',
+			'quote_address'=>'0x06DA85475F9d2Ae79af300dE474968cd5A4FDE61',
+			'quote_decimal'=>WAN_DIGIT,
+		);
+		
+		// wanUNI-WASP //
+		$list[9] = array(
+			'pair_address'=>'0xac8cd8ff1379af20b69e0b39253ad3d5ab2051b5',
+			'base_name'=>'WASP',
+			'base_symbol'=>'WASP',
+			'base_address'=>'0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a',
+			'base_decimal'=>WAN_DIGIT,
+			'quote_name'=>'Wrapped Uniswap@Wanchain',
+			'quote_symbol'=>'wanUNI',
+			'quote_address'=>'0x73eAA7431b11B1E7a7D5310de470de09883529df',
+			'quote_decimal'=>WAN_DIGIT,
+		);
+
+
+
 
 		return $list;
 		
@@ -303,6 +358,7 @@ class Wanswap_api extends CI_Controller {
 	public function wasp_supply()
 	{
 		$wasp_supply = $this->_getTokenSupply('0x8b9f9f4aa70b1b0d586be8adfb19c1ac38e05e9a','WAN')/WAN_DIGIT;
+		if (floor($wasp_supply) == 0)die();
 		header('Content-Type: application/json');
 		echo json_encode(array('wasp_supply'=>$wasp_supply));
 	}
@@ -314,6 +370,7 @@ class Wanswap_api extends CI_Controller {
 		$api_result = array();
 		$this->load->driver('cache', array('adapter' => 'file'));
 		$count_pair = count($list);
+		$this->load->database();
 		foreach($list as $pair)
 		{
 			
@@ -364,10 +421,120 @@ class Wanswap_api extends CI_Controller {
 			die();
 		}
 		
+		else{
+			if (rand(1,4) == 1)
+				{
+					foreach($api_result as $result)
+					{
+						if (rand(1,12) == 1)
+						{
+							$this->db->replace('wanswap_stats',array(
+								'base_symbol'=>$result['base_symbol'],
+								'quote_symbol'=>$result['quote_symbol'],
+								'base_volume'=>$result['base_volume'],
+								'quote_volume'=>$result['quote_volume'],
+								'last_price' =>$result['last_price'],
+								'timestamp'=>date('Y-m-d H:i:s')
+							));
+						}
+
+					}
+				}
+		}
+		
+		
 		header('Content-Type: application/json');
 		echo json_encode($api_result);
 		$this->client->close();
 	}
 	
+	
+	
+	private function _getprice_pair()
+	{
+		// connect via SSL, but don't check cert
+		$handle = curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,EOS,USDT,USDC,WAN,FNX,LINK,UNI&tsyms=USD');
+		curl_setopt($handle, CURLOPT_VERBOSE, true);
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+		$content = curl_exec($handle);
+
+		return $content; // show target page
+	}
+	public function get_tvl()
+	{
+		$price = json_decode($this->_getprice_pair(),TRUE);
+		$list = $this->_pair_list();
+		$this->load->database();
+		$all_pair_supply = array();
+		$wasp_rate = 0;
+		foreach($list as $pair)
+		{
+			$last_result = $this->db->select('quote_volume,base_volume,last_price')
+					->where('quote_symbol',$pair['quote_symbol'])
+					->where('base_symbol',$pair['base_symbol'])
+					->get('wanswap_stats')->row_array();
+					
+			if($pair['quote_symbol'] == 'WASP')
+			$wasp_rate = $last_result['last_price'];
+			
+			if (!isset($all_pair_supply[$pair['quote_symbol']])) $all_pair_supply[$pair['quote_symbol']] = 0;
+			$all_pair_supply[$pair['quote_symbol']] += $last_result['quote_volume'];	
+			
+			if (!isset($all_pair_supply[$pair['base_symbol']])) $all_pair_supply[$pair['base_symbol']] = 0;
+			$all_pair_supply[$pair['base_symbol']] += $last_result['base_volume'];	
+			
+		}
+		
+		//print_r($price);
+		$sum_tvl = 0;
+		foreach ($all_pair_supply as $symbol=>$amount)
+		{
+			//echo str_replace('wan','',$symbol);
+			if ($symbol == 'WASP')
+			{
+				$sum_tvl += $amount*($price['WAN']['USD']/$wasp_rate);
+				//echo $symbol.': '.$amount*($price['WAN']['USD']/$wasp_rate).'<br/>';
+				continue;
+			}
+			$sum_tvl += $amount*($price[str_replace('wan','',$symbol)]['USD']);
+			//echo $symbol.': '.$amount*($price[str_replace('wan','',$symbol)]['USD']).'<br/>';
+		}
+		header('Content-Type: application/json');
+		echo json_encode(array('result'=>round($sum_tvl,2)));
+		
+		
+	}
+	
+	
+	public function tickers()
+	{
+		$list = $this->_pair_list();
+		$this->load->database();
+		foreach($list as $pair)
+		{
+			
+			$pairs[] = array(
+				'ticker_id'=>$pair['quote_symbol'].'_'.$pair['base_symbol'],
+				'base'=>$pair['base_symbol'],
+				'target'=>$pair['quote_symbol']
+			);
+		}
+	}
+	public function pairs()
+	{
+		$list = $this->_pair_list();
+		$pairs = array();
+		foreach($list as $pair)
+		{
+			$pairs[] = array(
+				'ticker_id'=>$pair['quote_symbol'].'_'.$pair['base_symbol'],
+				'base'=>$pair['base_symbol'],
+				'target'=>$pair['quote_symbol']
+			);
+		}
+		header('Content-Type: application/json');
+		echo json_encode($pairs);
+	}
 	
 }

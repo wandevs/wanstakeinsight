@@ -17,7 +17,7 @@ class Token extends CI_Controller
 	private function _getprice()
 	{
 		// connect via SSL, but don't check cert
-		$handle = curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,EOS,USDT,USDC,WAN,FNX&tsyms=USD,CNY');
+		$handle = curl_init('https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,EOS,USDT,USDC,WAN,FNX,LINK,UNI&tsyms=USD,CNY');
 		curl_setopt($handle, CURLOPT_VERBOSE, true);
 		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
@@ -265,6 +265,25 @@ class Token extends CI_Controller
 		if ($amount != 0 && floor(abs($percentChange)) < 50)
 			$this->insert_db('wanUSDC', $amount / 1000000, $price['USDC']['USD'], 'wan', $timestamp);
 
+		// wanLINK //
+		$amount = $this->_getTokenSupply('0x06DA85475F9d2Ae79af300dE474968cd5A4FDE61', 'WAN');
+		echo 'wanLINK:' . $amount . '<br/>';
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name', 'wanLINK')->where('chain', 'wan')->order_by('id', 'desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount / WAN_DIGIT)) * 100;
+		if (!isset($asset_amount)) $percentChange=0;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
+			$this->insert_db('wanLINK', $amount / WAN_DIGIT, $price['LINK']['USD'], 'wan', $timestamp);
+			
+		// wanUNI //
+		$amount = $this->_getTokenSupply('0x73eaa7431b11b1e7a7d5310de470de09883529df', 'WAN');
+		echo 'wanUNI:' . $amount . '<br/>';
+		$asset_amount = $this->db->select('asset_amount')->where('asset_name', 'wanUNI')->where('chain', 'wan')->order_by('id', 'desc')->limit(1)->get('crosschain_stats')->row()->asset_amount;
+		$percentChange = (1 - $asset_amount / ($amount / WAN_DIGIT)) * 100;
+		if (!isset($asset_amount)) $percentChange=0;
+		if ($amount != 0 && floor(abs($percentChange)) < 50)
+			$this->insert_db('wanUNI', $amount / WAN_DIGIT, $price['UNI']['USD'], 'wan', $timestamp);
+
+
 		echo '<br/>=======@ETH=======<br/>';
 		//============Ethereum=============//
 		// WAN //
@@ -355,16 +374,23 @@ class Token extends CI_Controller
 	{
 		$this->output->cache(30);
 		$this->load->database();
-		$wanchain_assets = array('WWAN', 'wanETH', 'wanBTC', 'wanEOS', 'wanUSDT', 'wanUSDC');
+		$wanchain_assets = array('WWAN', 'wanETH', 'wanBTC', 'wanEOS', 'wanUSDT', 'wanUSDC','wanLINK','wanUNI');
 		$ethereum_assets = array('WAN', 'wanBTC', 'wanEOS');
 		$view['asset_icons'] = array(
-			'WWAN' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wwan.png',
-			'WAN' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wwan.png',
-			'wanETH' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanETH.png',
-			'wanBTC' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanBTC.png',
-			'wanEOS' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanEOS.png',
-			'wanUSDT' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanUSDT.png',
-			'wanUSDC' => 'https://raw.githubusercontent.com/wanswap/token-list/main/icons/wanUSDC.png'
+			// WANCHAIN //
+			'WWAN' => './assets/tokens/wWAN.png',
+			'WAN' => './assets/tokens/WAN.png',
+			'wanETH' => './assets/tokens/wanETH.png',
+			'wanBTC' => './assets/tokens/wanBTC.png',
+			'wanEOS' => './assets/tokens/wanEOS.png',
+			'wanUSDT' => './assets/tokens/wanUSDT.png',
+			'wanUSDC' => './assets/tokens/wanUSDC.png',
+			'wanLINK' => './assets/tokens/wanLINK.png',
+			'wanUNI' => './assets/tokens/wanUNI.png',
+			// ETHEREUM //
+			'WAN@ETHEREUM' => './assets/tokens/wan_eth.png',
+			'wanBTC@ETHEREUM' => './assets/tokens/btc_eth.png',
+			'wanEOS@ETHEREUM' => './assets/tokens/eos_eth.png',
 		);
 
 		$view['wanchain_tvl'] = 0;
@@ -451,6 +477,7 @@ class Token extends CI_Controller
 		$this->_getTokenSupply('0xDABd997Ae5e4799be47D6e69d9431615cbA28F48', 'WAN');
 		$this->client->close();
 	}
+	
 
 	function wasp($chart_type = 'day')
 	{
@@ -489,7 +516,7 @@ class Token extends CI_Controller
 		$rate = $token0 / $token1;
 		$wan_reflect = $token0 / $rate;
 		$view['wasp_price'] = number_format($price['WAN']['USD'] / $rate, 4);
-
+		$view['wan_price'] = number_format($price['WAN']['USD'] , 4);
 		$view['wasp_supply'] = number_format($wasp_supply);
 		$view['wasp_unclaimed'] = number_format($unclaim);
 		$view['wasp_burned'] = number_format($burned);
@@ -544,12 +571,23 @@ GROUP BY DAY(timestamp) ORDER BY id ASC';
 		$chart_data = $query->result_array();
 		$view['chart_data'] = $chart_data;
 
-
+	
 
 		// Gett MAX MIN AVG //
 
 		$query = $this->db->query($sql_summary);
 		$day_summary = $query->row_array();
+		
+		
+		$handle = curl_init('https://wanstakeinsight.com/wanswap_api/get_tvl');
+		curl_setopt($handle, CURLOPT_VERBOSE, true);
+		curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false);
+		$content = curl_exec($handle);
+		$content = json_decode($content,TRUE);
+		$view['tvl'] = $content['result'];
+		
+		
 		$view['day_summary'] = $day_summary;
 		$view['web_title'] = '$WASP TOKEN';
 		$this->load->view('wasp', $view);

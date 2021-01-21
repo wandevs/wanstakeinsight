@@ -60,8 +60,8 @@
                             <div class="row">
                                 <div class="col-xs-12 col-md-6">
                                     <div class="numbers text-center">
-                                        <p class="card-category">Delegation Capacity</p>
-                                        <p class="card-title"><?php echo number_format($total_selfstaked)?> WAN  <i style="cursor:pointer" class="fa fa-question-circle text-danger"  data-toggle="tooltip" data-html="true" title="Equal to Storemen Staked+Partners Staked"></i>
+                                        <p class="card-category">Delegation Capacity (1:5 Ratio)</p>
+                                        <p class="card-title"><?php echo number_format($total_selfstaked*5)?> WAN  <i style="cursor:pointer" class="fa fa-question-circle text-danger"  data-toggle="tooltip" data-html="true" title="Equal to Storemen Staked+Partners Staked"></i>
 
 
                                     </div>
@@ -79,7 +79,7 @@
                                 
                                 <div class="col-12">
                                     <?php
-                                    $realTotalCapacity = $total_selfstaked; // Total Capacity;
+                                    $realTotalCapacity = $total_selfstaked*5; // Total Capacity;
 
                                     $sumDelegatedPercent = $total_delegated*100/$realTotalCapacity;
 
@@ -395,7 +395,7 @@
                                         <?php
 										
 										$staked = ($storeman['deposit']+$storeman['partnerDeposit'])/WAN_DIGIT;
-										$capacity = $staked;
+										$capacity = $staked*5;
 										//echo $staked;
 										$capacityWanRemain = round($capacity-($storeman['delegateDeposit']/WAN_DIGIT));
 										$capicityPercent = ceil($storeman['delegateDeposit']/WAN_DIGIT*100/$capacity);

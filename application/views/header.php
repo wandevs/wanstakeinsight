@@ -163,6 +163,6 @@
 
         </nav>
 		
-		<div class="alert alert-info text-center"><i class="fa fa-heart"></i> Support us by staking with <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/vld/0x2a2fee5d3aefdcddd8247e3ea094a591323f3879" target="_blank">Our POS Validators</a></b> or <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/storemaninfo/0x92dce4f5857cad9208a2f168445e3670d4f84d74?groupid=0x000000000000000000000000000000000000000000000041726965735f303031" target="_blank">Our Storeman Node</a></b> <i class="fa fa-heart"></i></div>
+		<div class="alert alert-info text-center"><i class="fa fa-heart"></i> Support us by staking with <b><a style="color:white;text-decoration:underline" href="https://www.wanscan.org/storemaninfo/0x92dce4f5857cad9208a2f168445e3670d4f84d74?groupid=0x000000000000000000000000000000000000000000000041726965735f303031" target="_blank">Our Storeman Node</a></b> <i class="fa fa-heart"></i></div>
 
        

@@ -21,6 +21,7 @@
 						<div class="card-footer text-center"><hr/><div class="stats">Unclaimed <?php echo $wasp_unclaimed?> WASP</div></div>
                     </div>
                 </div>
+				
                 <div class="col-sm-6 col-lg-4">
                     <div class="card card-stats">
                         <div class="card-body ">
@@ -36,7 +37,7 @@
                                 
                             </div>
                         </div>
-						<div class="card-footer text-center"><hr/><div class="stats">Price ~<?php echo $wasp_price?> USD</div></div>
+						<div class="card-footer text-center"><hr/><div class="stats"><b>WAN</b> <?php echo $wan_price?>$ · <b>WASP</b> <?php echo $wasp_price?>$</div></div>
                     </div>
                 </div>
 				<div class="col-md-12 col-lg-4">
@@ -58,7 +59,7 @@
                     </div>
                 </div>
                </div>
-			   
+			  
 			   <div class="row">
 				<div class="col-md-12">
 					<div class="card card-stats">
@@ -101,9 +102,11 @@
 								<div style="flex-wrap:wrap;display:flex;align-items:center;justify-content:space-around;font-size:15px;padding-top:15px;padding-bottom:15px;">
 								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Highest<br/><b><?php echo round($day_summary['max_price'],4)?>$</b></div>
 								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Lowest<br/><b><?php echo round($day_summary['min_price'],4)?>$</b></div>
-								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Average<br/><b><?php echo round($day_summary['avg_price'],4)?>$</b> </div>
-								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Volume<br/><b><?php echo number_format($day_summary['sum_volume'],2)?>WASP</b></div>
-								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">M.Cap<br/><b><?php echo number_format($wasp_price*(str_replace(',','',$wasp_supply)),2)?>$</b></div>
+								<!--<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Average<br/><b><?php echo round($day_summary['avg_price'],4)?>$</b> </div>-->
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">Liquidity Changed<br/><b><?php echo number_format($day_summary['sum_volume'],2)?>WASP</b></div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">M.CAP<br/><b><?php echo number_format($wasp_price*(str_replace(',','',$wasp_supply)),2)?>$</b></div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">TVL<br/><b><?php echo number_format($tvl,2)?>$</b></div>
+								<div style="background:#f4f3ef;border-radius:15px;padding:10px 20px;flex:1;margin:5px;">M.CAP/TVL Ratio<br/><b><?php echo number_format($wasp_price*(str_replace(',','',$wasp_supply))/$tvl,3)?></b></div>
 								</div>
 							</div>
 						<canvas id="wasp_stat_chart"></canvas>
